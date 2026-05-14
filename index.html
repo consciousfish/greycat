@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>greycat781</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+    <nav class="navbar">
+        <div class="logo">greycat781</div>
+        <div class="menu-toggle" id="mobile-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#about">Про нас</a></li>
+            <li><a href="#memes">Мемы</a></li>
+            <li><a href="#wall">Стена</a></li>
+            <li><a href="https://discord.gg/yourlink" class="discord-btn">Discord</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <section id="about" class="centered-section">
+            <h1 class="giant-title">greycat781</h1>
+            <p class="subtitle">халупа червяка</p>
+        </section>
+
+        <section id="wall" class="section">
+            <h2>Стена приколов</h2>
+            <div class="wall-input">
+                <input type="text" id="postInput" placeholder="Напиши что-нибудь...">
+                <button onclick="addPost()">Отправить</button>
+            </div>
+            <div id="postsContainer"></div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
