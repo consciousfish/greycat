@@ -3,9 +3,7 @@ body {
     color: #dbdee1;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+    scroll-behavior: smooth;
 }
 
 .navbar {
@@ -13,8 +11,8 @@ body {
     justify-content: space-between;
     align-items: center;
     background-color: #1e1f22;
-    padding: 1rem 2rem;
-    position: fixed; /* Зафиксируем меню */
+    padding: 0.8rem 2rem;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
@@ -22,57 +20,46 @@ body {
 }
 
 .logo { font-weight: bold; font-size: 1.5rem; color: #5865f2; }
+.nav-links { display: flex; list-style: none; gap: 20px; margin: 0; padding: 0; align-items: center; }
+.nav-links a { color: #b5bac1; text-decoration: none; transition: 0.3s; font-weight: 500; }
+.nav-links a:hover { color: white; }
 
-.nav-links { display: flex; list-style: none; gap: 20px; margin: 0; padding: 0;}
+.discord-btn { background: #5865f2; color: white !important; padding: 6px 16px; border-radius: 4px; }
+.discord-btn:hover { background: #4752c4; }
 
-.nav-links a { color: white; text-decoration: none; transition: 0.3s; }
+.main-content { margin-top: 60px; }
 
-.nav-links a:hover { color: #5865f2; }
+.section { padding: 80px 20px; max-width: 700px; margin: auto; }
 
-/* Бургер-меню (три полосочки) */
-.menu-toggle { display: none; cursor: pointer; }
-.bar { display: block; width: 25px; height: 3px; margin: 5px; background-color: white; transition: 0.3s; }
-
-.discord-btn { background: #5865f2; padding: 5px 15px; border-radius: 5px; }
-
-/* Контент */
-.main-content {
-    margin-top: 80px; /* Отступ под фиксированное меню */
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.section { padding: 50px 20px; max-width: 800px; margin: auto; width: 100%; box-sizing: border-box;}
-
-/* Секция по центру */
 .centered-section {
-    flex-grow: 1;
+    height: 90vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 20px;
 }
 
-.giant-title {
-    font-size: 4rem; /* Очень большой заголовок */
-    margin: 0;
-    color: white;
-}
-
-.subtitle {
-    font-size: 1.5rem;
-    color: #949ba4;
-    margin-top: 10px;
-}
+.giant-title { font-size: 5rem; margin: 0; color: white; letter-spacing: -2px; }
+.subtitle { font-size: 1.5rem; color: #949ba4; margin-top: 10px; }
 
 /* Стена */
-.wall-input { display: flex; gap: 10px; margin-bottom: 20px; }
+.wall-input { display: flex; gap: 10px; margin-bottom: 30px; }
+input { background: #1e1f22; border: 1px solid #1e1f22; color: white; padding: 12px; flex-grow: 1; border-radius: 4px; outline: none; }
+input:focus { border-color: #5865f2; }
+button { background: #248046; color: white; border: none; padding: 10px 24px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+button:hover { background: #1a6334; }
 
-input { background: #1e1f22; border: 1px solid #4e5058; color: white; padding: 10px; flex-grow: 1; border-radius: 4px; }
+.post { 
+    background: #2b2d31; 
+    padding: 16px; 
+    border-radius: 8px; 
+    margin-bottom: 12px; 
+    border-left: 4px solid #5865f2; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-button { background: #248046; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
-
-.post { background: #2b2d31; padding: 15px; border-radius: 8px; margin-top: 10px; border-left: 4px solid #5865f2; text-align: left;}
+.del-btn { background: none; color: #da373c; padding: 5px; font-size: 0.8rem; opacity: 0.7; }
+.del-btn:hover { opacity: 1; text-decoration: underline; }
