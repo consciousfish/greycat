@@ -109,7 +109,7 @@ function renderBoardHeader(boards) {
                 <span class="board-name">${escapeHTML(board.name)}</span>
                 <span class="board-desc">${escapeHTML(board.description)}</span>
             </button>
-            ${isAdminMode && board.id !== DEFAULT_BOARD_ID ? `<button class="board-delete-btn" style="display:block;" title="Удалить борду" onclick="deleteBoard('${escapeJSString(board.id)}','${escapeJSString(board.name)}')">×</button>` : ''}
+            ${isAdminMode && board.id !== DEFAULT_BOARD_ID ? `<button class="board-delete-btn" style="display:block;" title="Удалить борду" onclick="deleteBoard('${escapeJSString(board.id)}','${escapeJSString(board.name)}')">Удалить</button>` : ''}
         </div>
     `).join('');
 }
