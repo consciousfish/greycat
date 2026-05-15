@@ -117,9 +117,15 @@
         <h1>Стена приколов</h1>
 
         <div id="userProfile" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; background: #18191c; padding: 12px 20px; border-radius: 8px; border: 1px solid #2f3136;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <img id="userAvatar" src="" alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%; display: none; border: 2px solid #5865f2;">
-                <span id="userStatus" style="color: #b9bbbe; font-weight: bold;">Вы вошли как гость</span>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <img id="userAvatar" src="" alt="Avatar" style="width: 50px; height: 50px; border-radius: 50%; display: none; border: 2px solid #5865f2; object-fit: cover;">
+                <div style="display: flex; flex-direction: column; gap: 4px; text-align: left;">
+                    <span id="userStatus" style="color: #b9bbbe; font-weight: bold;">Вы вошли как гость</span>
+                    <label style="color: #5865f2; font-size: 13px; cursor: pointer; text-decoration: underline;">
+                        Загрузить свою аватарку
+                        <input type="file" id="avatarLoader" accept="image/*" onchange="uploadCustomAvatar(event)" style="display: none;">
+                    </label>
+                </div>
             </div>
             <button id="authBtn" onclick="loginUser()" style="background: #5865f2; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: bold;">Войти / Сменить ник</button>
         </div>
