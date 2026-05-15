@@ -7,7 +7,7 @@ const ADMIN_PASS = "cat781grey";
 const DEFAULT_BOARD_ID = 'main';
 const BOARD_META_PREFIX = '[greycat-board]';
 const BOARD_POST_PREFIX = '[greycat-board-post:';
-let isAdminMode = false; 
+let isAdminMode = localStorage.getItem('forum_admin_mode') === 'true'; 
 let isSending = false; 
 let currentParentId = null; 
 let attachedMediaBase64 = null;
@@ -598,6 +598,7 @@ window.admin = function() {
     const pass = prompt("Пароль модератора:");
     if (pass === ADMIN_PASS) {
         isAdminMode = true; 
+        localStorage.setItem('forum_admin_mode', 'true');
         loadPosts(); 
         alert("Режим модератора активирован!");
     } else {
