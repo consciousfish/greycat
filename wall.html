@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>greycat781 — Стена</title>
+    <title>greycat781 — Форум</title>
     <link rel="stylesheet" href="style.css">
     <style>
         /* ── Wall-specific styles in SoundCloud palette ── */
@@ -67,6 +67,103 @@
             font-weight: 900;
             letter-spacing: -1px;
         }
+
+        /* Boards */
+        .boards-wrapper {
+            background-color: #1f1f1f;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid #2a2a2a;
+            text-align: left;
+        }
+        .boards-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 14px;
+        }
+        .boards-header h2 {
+            margin: 0;
+            color: #fff;
+            font-size: 1.15rem;
+            font-weight: 900;
+            letter-spacing: -0.3px;
+        }
+        .boards-header p {
+            margin: 5px 0 0;
+            color: #999;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        .board-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+        }
+        .board-card {
+            background: #181818;
+            border: 1px solid #2a2a2a;
+            border-left: 3px solid transparent;
+            color: #ccc;
+            border-radius: 8px;
+            padding: 12px 14px;
+            text-align: left;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.15s, background 0.15s, color 0.15s;
+        }
+        .board-card:hover,
+        .board-card.active {
+            background: #222427;
+            border-color: #ff5500;
+            color: #fff;
+        }
+        .board-name {
+            display: block;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+        .board-desc {
+            display: block;
+            color: #999;
+            font-size: 12px;
+            line-height: 1.35;
+        }
+        .board-admin-panel {
+            display: none;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .board-admin-panel input {
+            flex: 1;
+            padding: 11px 13px;
+            background-color: #2a2a2a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: white;
+            font-size: 0.9rem;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+        }
+        .board-admin-panel input:focus { border-color: #ff5500; }
+        .board-admin-panel button {
+            background-color: #ff5500;
+            color: white;
+            border: none;
+            padding: 11px 18px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.15s;
+        }
+        .board-admin-panel button:hover { background-color: #ff7733; }
 
         /* User profile block */
         .comment-box-wrapper {
@@ -331,13 +428,29 @@
         <nav>
             <a href="index.html">Главная</a>
             <a href="memes.html">Мемы</a>
-            <a href="wall.html" class="active">Стена</a>
+            <a href="wall.html" class="active">Форум</a>
+            <a href="#" onclick="admin(); return false;">Админ</a>
             <a href="#" class="discord-btn">Discord</a>
         </nav>
     </header>
 
     <div class="main-content">
-        <h1>Стена приколов</h1>
+        <h1>Форум</h1>
+
+        <div class="boards-wrapper">
+            <div class="boards-header">
+                <div>
+                    <h2 id="boardTitle">Форум</h2>
+                    <p id="boardDescription">Главная ветка</p>
+                </div>
+            </div>
+            <div id="boardList" class="board-list"></div>
+            <div id="boardAdminPanel" class="board-admin-panel">
+                <input type="text" id="boardNameInput" placeholder="Название борды">
+                <input type="text" id="boardDescInput" placeholder="Короткое описание">
+                <button onclick="createBoard()">Создать</button>
+            </div>
+        </div>
 
         <div id="userProfile">
             <div style="display: flex; align-items: center; gap: 14px;">
@@ -361,7 +474,7 @@
             <div class="input-container">
                 <button class="attach-btn" title="Прикрепить фото или GIF" onclick="document.getElementById('mediaUploader').click()">🖼️</button>
                 <input type="file" id="mediaUploader" accept="image/*,image/gif" onchange="handleMediaSelect(event)" style="display: none;">
-                <input type="text" id="postInput" placeholder="Напиши что-нибудь на стене...">
+                <input type="text" id="postInput" placeholder="Напиши что-нибудь в этой ветке...">
                 <button class="send-btn" id="sendBtn">Отправить</button>
             </div>
             <div id="previewMediaContainer" class="preview-media-container">
