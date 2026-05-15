@@ -4,10 +4,181 @@ const SUPABASE_KEY = 'sb_publishable_QADVddyaye_VV4M3JIEQDQ_iE0YF0lH';
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const ADMIN_PASS = "cat781grey";
+const DEFAULT_BOARD_ID = 'main';
+const BOARD_META_PREFIX = '[greycat-board]';
+const BOARD_POST_PREFIX = '[greycat-board-post:';
 let isAdminMode = false; 
 let isSending = false; 
 let currentParentId = null; 
 let attachedMediaBase64 = null;
+let currentBoardId = DEFAULT_BOARD_ID;
+let cachedBoards = [];
+
+function makeBoardSlug(name) {
+    const fallback = `board-${Date.now()}`;
+    return (name || fallback)
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9а-яё]+/gi, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, 42) || fallback;
+}
+
+function escapeHTML(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function escapeJSString(value) {
+    return String(value || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
+function getBoardIdFromUrl() {
+    const hash = window.location.hash.replace(/^#/, '');
+    const params = new URLSearchParams(hash);
+    return params.get('board') || DEFAULT_BOARD_ID;
+}
+
+function setCurrentBoard(id) {
+    currentBoardId = id || DEFAULT_BOARD_ID;
+    const params = new URLSearchParams();
+    if (currentBoardId !== DEFAULT_BOARD_ID) params.set('board', currentBoardId);
+    window.location.hash = params.toString();
+}
+
+function parseBoardMeta(post) {
+    if (!post.text || !post.text.startsWith(BOARD_META_PREFIX)) return null;
+    try {
+        const board = JSON.parse(post.text.slice(BOARD_META_PREFIX.length));
+        if (!board || !board.id || !board.name) return null;
+        const boardId = String(board.id).replace(/[^a-z0-9а-яё-]/gi, '');
+        if (!boardId) return null;
+        return {
+            id: boardId,
+            name: String(board.name),
+            description: String(board.description || '')
+        };
+    } catch (e) {
+        return null;
+    }
+}
+
+function getPostBoardId(post) {
+    if (!post.text || !post.text.startsWith(BOARD_POST_PREFIX)) return DEFAULT_BOARD_ID;
+    const endIndex = post.text.indexOf(']');
+    if (endIndex === -1) return DEFAULT_BOARD_ID;
+    return post.text.slice(BOARD_POST_PREFIX.length, endIndex) || DEFAULT_BOARD_ID;
+}
+
+function stripBoardPrefix(text) {
+    if (!text || !text.startsWith(BOARD_POST_PREFIX)) return text || '';
+    const endIndex = text.indexOf(']');
+    if (endIndex === -1) return text;
+    return text.slice(endIndex + 1).replace(/^\n/, '');
+}
+
+function withBoardPrefix(text) {
+    if (currentBoardId === DEFAULT_BOARD_ID) return text;
+    return `${BOARD_POST_PREFIX}${currentBoardId}]\n${text}`;
+}
+
+function getCurrentBoard() {
+    return cachedBoards.find(board => board.id === currentBoardId) || cachedBoards[0];
+}
+
+function renderBoardHeader(boards) {
+    cachedBoards = boards;
+    const boardList = document.getElementById('boardList');
+    const boardTitle = document.getElementById('boardTitle');
+    const boardDescription = document.getElementById('boardDescription');
+    const boardAdminPanel = document.getElementById('boardAdminPanel');
+    const activeBoard = getCurrentBoard();
+
+    if (boardTitle && activeBoard) boardTitle.textContent = activeBoard.name;
+    if (boardDescription && activeBoard) boardDescription.textContent = activeBoard.description;
+    if (boardAdminPanel) boardAdminPanel.style.display = isAdminMode ? 'flex' : 'none';
+    if (!boardList) return;
+
+    boardList.innerHTML = boards.map(board => `
+        <button class="board-card ${board.id === currentBoardId ? 'active' : ''}" onclick="openBoard('${escapeJSString(board.id)}')">
+            <span class="board-name">${escapeHTML(board.name)}</span>
+            <span class="board-desc">${escapeHTML(board.description)}</span>
+        </button>
+    `).join('');
+}
+
+function collectBoards(data) {
+    const boards = [{
+        id: DEFAULT_BOARD_ID,
+        name: 'Форум',
+        description: 'Главная ветка'
+    }];
+
+    data.forEach(post => {
+        const board = parseBoardMeta(post);
+        if (board && !boards.some(existing => existing.id === board.id)) {
+            boards.push(board);
+        }
+    });
+
+    if (!boards.some(board => board.id === currentBoardId)) {
+        currentBoardId = DEFAULT_BOARD_ID;
+    }
+
+    return boards;
+}
+
+window.openBoard = function(id) {
+    setCurrentBoard(id);
+    cancelReply();
+    loadPosts();
+};
+
+window.createBoard = async function() {
+    if (!isAdminMode) return;
+    const nameInput = document.getElementById('boardNameInput');
+    const descInput = document.getElementById('boardDescInput');
+    if (!nameInput) return;
+
+    const name = nameInput.value.trim();
+    const description = descInput ? descInput.value.trim() : '';
+    if (!name) return;
+
+    const slugBase = makeBoardSlug(name);
+    let slug = slugBase;
+    let index = 2;
+    while (cachedBoards.some(board => board.id === slug)) {
+        slug = `${slugBase}-${index}`;
+        index += 1;
+    }
+
+    const boardMeta = {
+        id: slug,
+        name,
+        description: description || 'Новая ветка форума'
+    };
+
+    const { error } = await supabaseClient.from('posts').insert([{
+        text: BOARD_META_PREFIX + JSON.stringify(boardMeta),
+        username: 'admin',
+        avatar: '',
+        parent_id: null,
+        image: null
+    }]);
+
+    if (error) {
+        alert('Ошибка создания борды: ' + error.message);
+        return;
+    }
+
+    nameInput.value = '';
+    if (descInput) descInput.value = '';
+    openBoard(slug);
+};
 
 window.loginUser = function() {
     const name = prompt("Введите ваш никнейм для комментирования:");
@@ -107,7 +278,7 @@ window.cancelReply = function() {
     const indicator = document.getElementById('replyIndicator');
     if (indicator) indicator.style.display = 'none';
     const input = document.getElementById('postInput');
-    if (input) input.placeholder = "Напиши что-нибудь на стене...";
+    if (input) input.placeholder = "Напиши что-нибудь в этой ветке...";
 };
 
 function hasUserReacted(postId) {
@@ -128,6 +299,7 @@ function saveUserReaction(postId, type) {
 function createPostHTML(post) {
     const postDate = post.created_at ? new Date(post.created_at) : new Date();
     const formattedDate = postDate.toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    const visibleText = stripBoardPrefix(post.text);
     const checkboxHTML = isAdminMode 
         ? `<input type="checkbox" class="admin-select-checkbox" value="${post.id}" style="margin-right:15px;width:22px;height:22px;cursor:pointer;align-self:center;">` 
         : '';
@@ -145,7 +317,7 @@ function createPostHTML(post) {
                     <strong style="color:#fff;font-size:14px;">${post.username || 'Аноним'}</strong>
                     <span style="color:#555;font-size:11px;">${formattedDate}</span>
                 </div>
-                <div style="color:#ccc;word-break:break-word;font-size:14px;line-height:1.5;">${post.text}</div>
+                <div style="color:#ccc;word-break:break-word;font-size:14px;line-height:1.5;">${visibleText}</div>
                 ${imageHTML}
                 <div style="display:flex;gap:8px;align-items:center;margin-top:9px;">
                     <button class="reaction-btn" style="${likeBtnStyle}" onclick="addReaction(${post.id},'likes',${post.likes||0},${post.dislikes||0})">👍 <span>${post.likes||0}</span></button>
@@ -189,6 +361,7 @@ window.toggleReplies = function(btn) {
 async function loadPosts() {
     const container = document.getElementById('postsContainer');
     if (!container) return; 
+    currentBoardId = getBoardIdFromUrl();
 
     const { data, error } = await supabaseClient
         .from('posts')
@@ -201,6 +374,9 @@ async function loadPosts() {
     }
 
     container.innerHTML = '';
+    const allPosts = data || [];
+    const boards = collectBoards(allPosts);
+    renderBoardHeader(boards);
     
     if (isAdminMode) {
         const massDelBtn = document.createElement('button');
@@ -212,11 +388,19 @@ async function loadPosts() {
 
     const roots = [];
     const repliesMap = {};
+    const visibleIds = new Set();
 
-    data.forEach(post => {
+    allPosts.forEach(post => {
+        if (parseBoardMeta(post)) return;
+        if (getPostBoardId(post) !== currentBoardId) return;
+        visibleIds.add(post.id);
+    });
+
+    allPosts.forEach(post => {
+        if (parseBoardMeta(post) || !visibleIds.has(post.id)) return;
         if (!post.parent_id) {
             roots.push(post);
-        } else {
+        } else if (visibleIds.has(post.parent_id)) {
             if (!repliesMap[post.parent_id]) repliesMap[post.parent_id] = [];
             repliesMap[post.parent_id].push(post);
         }
@@ -294,6 +478,7 @@ async function addPost() {
     if (!input) return;
     const text = input.value.trim();
     if (!text && !attachedMediaBase64) return;
+    const storedText = withBoardPrefix(text);
 
     // FIX: проверяем что родительский пост существует перед вставкой
     if (currentParentId !== null) {
@@ -314,7 +499,7 @@ async function addPost() {
     if (sendBtn) sendBtn.disabled = true;
 
     const { error } = await supabaseClient.from('posts').insert([{ 
-        text: text,
+        text: storedText,
         username: username,
         avatar: avatar,
         parent_id: currentParentId,
@@ -328,7 +513,7 @@ async function addPost() {
         // Fallback: если всё равно foreign key error — шлём без parent_id
         if (error.message && error.message.includes('foreign key')) {
             const { error: error2 } = await supabaseClient.from('posts').insert([{ 
-                text: text, username: username, avatar: avatar, parent_id: null, image: attachedMediaBase64
+                text: storedText, username: username, avatar: avatar, parent_id: null, image: attachedMediaBase64
             }]);
             if (error2) { alert('Ошибка добавления: ' + error2.message); return; }
         } else {
@@ -389,4 +574,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     updateProfileUI();
     loadPosts();
+    window.addEventListener('hashchange', () => {
+        cancelReply();
+        loadPosts();
+    });
 });
