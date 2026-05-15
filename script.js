@@ -7,6 +7,7 @@ const ADMIN_PASS = "cat781grey";
 let isAdminMode = false; 
 let isSending = false; 
 let currentParentId = null; 
+let attachedMediaBase64 = null; // Переменная для хранения прикрепленного изображения
 
 // Авторизация пользователя
 window.loginUser = function() {
@@ -25,7 +26,7 @@ window.loginUser = function() {
     updateProfileUI();
 };
 
-// Загрузка кастомной аватарки без её сброса
+// Загрузка кастомной аватарки
 window.uploadCustomAvatar = function(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -65,7 +66,45 @@ function updateProfileUI() {
     }
 }
 
-// Режим ответа (привязка к parent_id)
+// Выбор фото или гифки для поста
+window.handleMediaSelect = function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Ограничение размера файла (для Base64 лучше держать файлы в пределах 2.5 МБ)
+    if (file.size > 2621440) {
+        alert("Файл слишком большой! Выберите картинку или GIF весом до 2.5 МБ.");
+        event.target.value = "";
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        attachedMediaBase64 = e.target.result;
+        
+        // Показываем блок предпросмотра
+        const container = document.getElementById('previewMediaContainer');
+        const img = document.getElementById('previewMediaImg');
+        if (container && img) {
+            img.src = attachedMediaBase64;
+            container.style.display = 'block';
+        }
+    };
+    reader.readAsDataURL(file);
+};
+
+// Очистить выбранную картинку
+window.clearMediaPreview = function() {
+    attachedMediaBase64 = null;
+    const container = document.getElementById('previewMediaContainer');
+    const img = document.getElementById('previewMediaImg');
+    const uploader = document.getElementById('mediaUploader');
+    if (container) container.style.display = 'none';
+    if (img) img.src = '';
+    if (uploader) uploader.value = '';
+};
+
+// Режим ответа
 window.setReplyTarget = function(id, username) {
     currentParentId = id;
     const indicator = document.getElementById('replyIndicator');
@@ -89,13 +128,11 @@ window.cancelReply = function() {
     if (input) input.placeholder = "Напиши что-нибудь на стене...";
 };
 
-// Получить текущую реакцию на пост из кэша
 function hasUserReacted(postId) {
     const reactedPosts = JSON.parse(localStorage.getItem('reacted_posts') || '{}');
     return reactedPosts[postId] || null; 
 }
 
-// Сохранить или удалить реакцию в кэше
 function saveUserReaction(postId, type) {
     const reactedPosts = JSON.parse(localStorage.getItem('reacted_posts') || '{}');
     if (type === null) {
@@ -106,7 +143,7 @@ function saveUserReaction(postId, type) {
     localStorage.setItem('reacted_posts', JSON.stringify(reactedPosts));
 }
 
-// Генератор HTML постов
+// Генератор HTML постов (с поддержкой тега картинок/гифок)
 function createPostHTML(post) {
     const postDate = post.created_at ? new Date(post.created_at) : new Date();
     const formattedDate = postDate.toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -119,6 +156,11 @@ function createPostHTML(post) {
     const likeBtnStyle = userReaction === 'likes' ? 'border-color: #248046; color: #248046; background: #1c2e24;' : '';
     const dislikeBtnStyle = userReaction === 'dislikes' ? 'border-color: #da373c; color: #da373c; background: #2d1e22;' : '';
 
+    // Если к посту привязана картинка, генерируем для нее тег <img>
+    const imageHTML = post.image 
+        ? `<img src="${post.image}" class="post-attached-image" alt="Прикрепленное медиа">` 
+        : '';
+
     return `
         <div style="display: flex; align-items: flex-start; gap: 15px;">
             ${checkboxHTML}
@@ -128,9 +170,11 @@ function createPostHTML(post) {
                     <strong style="color: #fff; font-size: 18px;">${post.username || 'Аноним'}</strong>
                     <span style="color: #72767d; font-size: 13px;">${formattedDate}</span>
                 </div>
-                <div style="color: #dcddde; word-break: break-word; font-size: 17px; line-height: 1.4; margin-bottom: 12px;">${post.text}</div>
+                <div style="color: #dcddde; word-break: break-word; font-size: 17px; line-height: 1.4;">${post.text}</div>
                 
-                <div style="display: flex; gap: 12px; align-items: center;">
+                ${imageHTML}
+                
+                <div style="display: flex; gap: 12px; align-items: center; margin-top: 12px;">
                     <button class="reaction-btn" style="${likeBtnStyle}" onclick="addReaction(${post.id}, 'likes', ${post.likes || 0}, ${post.dislikes || 0})">👍 <span>${post.likes || 0}</span></button>
                     <button class="reaction-btn" style="${dislikeBtnStyle}" onclick="addReaction(${post.id}, 'dislikes', ${post.likes || 0}, ${post.dislikes || 0})">👎 <span>${post.dislikes || 0}</span></button>
                     <button style="background: none; border: none; color: #5865f2; font-weight: bold; cursor: pointer; font-size: 15px; margin-left: 10px;" onclick="setReplyTarget(${post.id}, '${post.username}')">Ответить</button>
@@ -220,12 +264,10 @@ window.addReaction = async function(id, clickedType, currentLikes, currentDislik
     let nextSavedReaction = clickedType;
 
     if (previousReaction === clickedType) {
-        // Случай 1: Нажали на ту же кнопку повторно -> Отменяем реакцию полностью
         if (clickedType === 'likes') newLikes = Math.max(0, newLikes - 1);
         if (clickedType === 'dislikes') newDislikes = Math.max(0, newDislikes - 1);
         nextSavedReaction = null; 
     } else if (previousReaction && previousReaction !== clickedType) {
-        // Случай 2: Передумали и нажали на противоположную кнопку
         if (clickedType === 'likes') {
             newLikes += 1;
             newDislikes = Math.max(0, newDislikes - 1);
@@ -234,12 +276,10 @@ window.addReaction = async function(id, clickedType, currentLikes, currentDislik
             newLikes = Math.max(0, newLikes - 1);
         }
     } else {
-        // Случай 3: Голосуют первый раз
         if (clickedType === 'likes') newLikes += 1;
         if (clickedType === 'dislikes') newDislikes += 1;
     }
 
-    // Сохраняем обновленные цифры в Supabase
     const { error } = await supabaseClient
         .from('posts')
         .update({ likes: newLikes, dislikes: newDislikes })
@@ -248,12 +288,12 @@ window.addReaction = async function(id, clickedType, currentLikes, currentDislik
     if (error) {
         console.error("Ошибка при обновлении реакции:", error.message);
     } else {
-        saveUserReaction(id, nextSavedReaction); // Синхронизируем статус с кэшем браузера
-        loadPosts(); // Обновляем стену
+        saveUserReaction(id, nextSavedReaction); 
+        loadPosts(); 
     }
 };
 
-// Отправка поста
+// Отправка поста с поддержкой изображений
 async function addPost() {
     if (isSending) return; 
 
@@ -271,17 +311,21 @@ async function addPost() {
     if (!input) return;
     
     const text = input.value.trim();
-    if (!text) return;
+    
+    // Пост можно отправить, если есть либо текст, либо прикрепленная картинка
+    if (!text && !attachedMediaBase64) return;
 
     isSending = true;
     const sendBtn = document.getElementById('sendBtn');
     if (sendBtn) sendBtn.disabled = true;
 
+    // Отправляем данные (включая новое поле image)
     const { error } = await supabaseClient.from('posts').insert([{ 
         text: text,
         username: username,
         avatar: avatar,
-        parent_id: currentParentId
+        parent_id: currentParentId,
+        image: attachedMediaBase64
     }]);
 
     isSending = false;
@@ -291,6 +335,7 @@ async function addPost() {
         alert('Ошибка добавления: ' + error.message);
     } else {
         input.value = '';
+        clearMediaPreview(); // Сбрасываем превью картинки
         cancelReply();
         loadPosts();
     }
