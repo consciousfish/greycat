@@ -4,30 +4,134 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>greycat781 — Стена</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #202225;
+            color: #fff;
+            font-family: sans-serif;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 40px;
+            background-color: #18191c;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #5865f2;
+        }
+        nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        nav a {
+            color: #b9bbbe;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        nav a:hover {
+            color: #fff;
+        }
+        .discord-btn {
+            background-color: #5865f2;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .main-content {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 30px;
+        }
+        .input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        input {
+            flex: 1;
+            padding: 12px;
+            background-color: #2f3136;
+            border: 1px solid #202225;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+        input:focus {
+            border-color: #5865f2;
+        }
+        .send-btn {
+            background-color: #248046;
+            color: white;
+            border: none;
+            padding: 0 24px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .send-btn:hover {
+            background-color: #1a6535;
+        }
+        #postsContainer {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            text-align: left;
+            margin-top: 20px;
+        }
+        .post {
+            background-color: #2f3136;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid #5865f2;
+        }
+    </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo">greycat781</div>
-        <ul class="nav-links">
-            <li><a href="./index.html">Главная</a></li>
-            <li><a href="./memes.html">Мемы</a></li>
-            <li><a href="./wall.html">Стена</a></li>
-            <li><a href="https://discord.gg/yourlink" target="_blank" class="discord-btn">Discord</a></li>
-        </ul>
-    </nav>
 
-    <main class="main-content">
-        <section class="section">
-            <h2 style="text-align: center;">Стена приколов</h2>
-            <div class="wall-input">
-                <input type="text" id="postInput" placeholder="Напиши на стене...">
-                <button id="sendBtn">Отправить</button>
+    <header>
+        <div class="logo">greycat781</div>
+        <nav>
+            <a href="index.html">Главная</a>
+            <a href="memes.html">Мемы</a>
+            <a href="wall.html" style="color: #fff;">Стена</a>
+            <a href="#" class="discord-btn">Discord</a>
+        </nav>
+    </header>
+
+    <div class="main-content">
+        <h1>Стена приколов</h1>
+
+        <div id="userProfile" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; background: #18191c; padding: 12px 20px; border-radius: 8px; border: 1px solid #2f3136;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <img id="userAvatar" src="" alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%; display: none; border: 2px solid #5865f2;">
+                <span id="userStatus" style="color: #b9bbbe; font-weight: bold;">Вы вошли как гость</span>
             </div>
-            <div id="postsContainer"></div>
-        </section>
-    </main>
+            <button id="authBtn" onclick="loginUser()" style="background: #5865f2; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: bold;">Войти / Сменить ник</button>
+        </div>
+
+        <div class="input-container">
+            <input type="text" id="postInput" placeholder="Напиши что-нибудь на стене...">
+            <button class="send-btn" id="sendBtn">Отправить</button>
+        </div>
+
+        <div id="postsContainer">
+            </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
