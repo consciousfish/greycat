@@ -3,7 +3,7 @@ const SUPABASE_KEY = 'sb_publishable_QADVddyaye_VV4M3JIEQDQ_iE0YF0lH';
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const ADMIN_PASS = "781";
+const ADMIN_PASS = "cat781grey";
 
 // Загрузка сообщений со стены
 async function loadPosts() {
