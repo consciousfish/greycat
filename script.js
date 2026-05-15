@@ -89,16 +89,20 @@ window.cancelReply = function() {
     if (input) input.placeholder = "Напиши что-нибудь на стене...";
 };
 
-// Проверяет, ставил ли уже юзер реакцию на этот пост
+// Получить текущую реакцию на пост из кэша
 function hasUserReacted(postId) {
     const reactedPosts = JSON.parse(localStorage.getItem('reacted_posts') || '{}');
-    return reactedPosts[postId] || null; // вернет 'likes', 'dislikes' или null
+    return reactedPosts[postId] || null; 
 }
 
-// Запоминает реакцию юзера локально
+// Сохранить или удалить реакцию в кэше
 function saveUserReaction(postId, type) {
     const reactedPosts = JSON.parse(localStorage.getItem('reacted_posts') || '{}');
-    reactedPosts[postId] = type;
+    if (type === null) {
+        delete reactedPosts[postId];
+    } else {
+        reactedPosts[postId] = type;
+    }
     localStorage.setItem('reacted_posts', JSON.stringify(reactedPosts));
 }
 
@@ -111,7 +115,6 @@ function createPostHTML(post) {
         ? `<input type="checkbox" class="admin-select-checkbox" value="${post.id}" style="margin-right: 15px; width: 22px; height: 22px; cursor: pointer; align-self: center;">` 
         : '';
 
-    // Выясняем, нажимал ли пользователь лайк или дизлайк на этот пост, чтобы визуально подсветить кнопку
     const userReaction = hasUserReacted(post.id);
     const likeBtnStyle = userReaction === 'likes' ? 'border-color: #248046; color: #248046; background: #1c2e24;' : '';
     const dislikeBtnStyle = userReaction === 'dislikes' ? 'border-color: #da373c; color: #da373c; background: #2d1e22;' : '';
@@ -128,8 +131,8 @@ function createPostHTML(post) {
                 <div style="color: #dcddde; word-break: break-word; font-size: 17px; line-height: 1.4; margin-bottom: 12px;">${post.text}</div>
                 
                 <div style="display: flex; gap: 12px; align-items: center;">
-                    <button class="reaction-btn" style="${likeBtnStyle}" onclick="addReaction(${post.id}, 'likes', ${post.likes || 0})">👍 <span>${post.likes || 0}</span></button>
-                    <button class="reaction-btn" style="${dislikeBtnStyle}" onclick="addReaction(${post.id}, 'dislikes', ${post.dislikes || 0})">👎 <span>${post.dislikes || 0}</span></button>
+                    <button class="reaction-btn" style="${likeBtnStyle}" onclick="addReaction(${post.id}, 'likes', ${post.likes || 0}, ${post.dislikes || 0})">👍 <span>${post.likes || 0}</span></button>
+                    <button class="reaction-btn" style="${dislikeBtnStyle}" onclick="addReaction(${post.id}, 'dislikes', ${post.likes || 0}, ${post.dislikes || 0})">👎 <span>${post.dislikes || 0}</span></button>
                     <button style="background: none; border: none; color: #5865f2; font-weight: bold; cursor: pointer; font-size: 15px; margin-left: 10px;" onclick="setReplyTarget(${post.id}, '${post.username}')">Ответить</button>
                 </div>
             </div>
@@ -209,33 +212,44 @@ async function loadPosts() {
     });
 }
 
-// Защищенная функция лайков: один человек — одна реакция
-window.addReaction = async function(id, type, currentCount) {
+// Умная смена и отмена реакций
+window.addReaction = async function(id, clickedType, currentLikes, currentDislikes) {
     const previousReaction = hasUserReacted(id);
+    let newLikes = currentLikes;
+    let newDislikes = currentDislikes;
+    let nextSavedReaction = clickedType;
 
-    // Если пользователь нажимает на то же самое, что уже ставил — просто игнорим или даем знать
-    if (previousReaction === type) {
-        alert("Вы уже поставили эту реакцию!");
-        return;
+    if (previousReaction === clickedType) {
+        // Случай 1: Нажали на ту же кнопку повторно -> Отменяем реакцию полностью
+        if (clickedType === 'likes') newLikes = Math.max(0, newLikes - 1);
+        if (clickedType === 'dislikes') newDislikes = Math.max(0, newDislikes - 1);
+        nextSavedReaction = null; 
+    } else if (previousReaction && previousReaction !== clickedType) {
+        // Случай 2: Передумали и нажали на противоположную кнопку
+        if (clickedType === 'likes') {
+            newLikes += 1;
+            newDislikes = Math.max(0, newDislikes - 1);
+        } else {
+            newDislikes += 1;
+            newLikes = Math.max(0, newLikes - 1);
+        }
+    } else {
+        // Случай 3: Голосуют первый раз
+        if (clickedType === 'likes') newLikes += 1;
+        if (clickedType === 'dislikes') newDislikes += 1;
     }
 
-    // Если пользователь передумывает (например, стоял лайк, а он жмет дизлайк)
-    if (previousReaction && previousReaction !== type) {
-        alert("Вы уже оставили своё мнение под этим постом!");
-        return;
-    }
-
-    // Шлём инкремент в базу данных
+    // Сохраняем обновленные цифры в Supabase
     const { error } = await supabaseClient
         .from('posts')
-        .update({ [type]: currentCount + 1 })
+        .update({ likes: newLikes, dislikes: newDislikes })
         .eq('id', id);
 
     if (error) {
-        console.error("Ошибка обновления лайка:", error.message);
+        console.error("Ошибка при обновлении реакции:", error.message);
     } else {
-        saveUserReaction(id, type); // Запоминаем выбор в браузере
-        loadPosts(); // Обновляем счётчики на экране
+        saveUserReaction(id, nextSavedReaction); // Синхронизируем статус с кэшем браузера
+        loadPosts(); // Обновляем стену
     }
 };
 
