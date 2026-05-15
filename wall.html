@@ -186,7 +186,8 @@
             border-left: 3px solid #ff5500;
             position: relative;
         }
-        /* Replies toggle button */
+
+        /* ── REPLIES: no indent, displayed below, separator line only ── */
         .replies-toggle-wrapper {
             margin-top: 14px;
         }
@@ -216,22 +217,23 @@
             font-size: 11px;
             display: inline-block;
         }
+        /* Replies container: no left indent/border, just a top separator */
         .replies-container {
-            width: 100%;
+            margin-left: 0;
+            border-left: none;
+            padding-left: 0;
+            border-top: 1px solid #2a2a2a;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-top: 14px;
-            padding-top: 14px;
-            border-top: 1px solid #2a2a2a;
+            gap: 10px;
+            margin-top: 10px;
+            padding-top: 10px;
         }
-        /* Reply posts are smaller */
+        /* Reply posts: same width as parent, slightly different bg */
         .reply-post {
-            width: 100%;
-            padding: 18px 20px !important;
+            padding: 14px 16px !important;
             background-color: #222427 !important;
-            border-left: 3px solid #ff5500;
-            border-radius: 8px;
+            border-left: 3px solid #3a3a3a !important;
         }
 
         /* Reaction buttons */
