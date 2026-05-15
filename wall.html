@@ -141,24 +141,84 @@
             font-size: 12px;
             line-height: 1.35;
         }
-        .board-delete-btn {
+        .board-actions {
             display: none;
-            align-self: stretch;
+            flex-direction: column;
+            gap: 6px;
+            width: 74px;
+        }
+        .board-action-btn {
             background: #2a1010;
             color: #e03c3c;
             border: 1px solid rgba(224,60,60,0.35);
-            border-radius: 8px;
-            padding: 0 14px;
+            border-radius: 6px;
+            padding: 6px 8px;
             cursor: pointer;
-            font-size: 13px;
-            font-weight: 800;
+            font-size: 11px;
+            font-weight: 700;
             font-family: 'Inter', sans-serif;
             transition: background 0.15s, border-color 0.15s, color 0.15s;
         }
-        .board-delete-btn:hover {
+        .board-action-btn.edit {
+            background: #181818;
+            color: #ccc;
+            border-color: #333;
+        }
+        .board-action-btn:hover {
             background: #3a1414;
             border-color: #e03c3c;
             color: #fff;
+        }
+        .board-action-btn.edit:hover {
+            background: #222427;
+            border-color: #ff5500;
+            color: #fff;
+        }
+        .admin-toggle {
+            display: none;
+            position: fixed;
+            right: 14px;
+            bottom: 14px;
+            z-index: 1200;
+            align-items: center;
+            gap: 8px;
+            background: #181818;
+            border: 1px solid #2a2a2a;
+            border-radius: 20px;
+            padding: 8px 10px;
+            color: #999;
+            font-size: 12px;
+            font-weight: 700;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+        }
+        .admin-toggle input {
+            appearance: none;
+            width: 34px;
+            height: 18px;
+            border-radius: 999px;
+            background: #333;
+            position: relative;
+            cursor: pointer;
+            margin: 0;
+            transition: background 0.15s;
+        }
+        .admin-toggle input::before {
+            content: '';
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            top: 2px;
+            left: 2px;
+            border-radius: 50%;
+            background: #999;
+            transition: transform 0.15s, background 0.15s;
+        }
+        .admin-toggle input:checked {
+            background: #ff5500;
+        }
+        .admin-toggle input:checked::before {
+            background: #fff;
+            transform: translateX(16px);
         }
         .board-admin-panel {
             display: none;
@@ -454,11 +514,15 @@
         <div class="logo" onclick="if(event.ctrlKey) admin()">greycat781</div>
         <nav>
             <a href="index.html">Главная</a>
-            <a href="memes.html">Мемы</a>
             <a href="wall.html" class="active">Форум</a>
             <a href="#" class="discord-btn">Discord</a>
         </nav>
     </header>
+
+    <label id="adminToggle" class="admin-toggle">
+        <span>Админ</span>
+        <input type="checkbox" id="adminModeSwitch" onchange="toggleAdminMode(this.checked)">
+    </label>
 
     <div class="main-content">
         <h1>Форум</h1>

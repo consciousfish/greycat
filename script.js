@@ -14,6 +14,14 @@ let attachedMediaBase64 = null;
 let currentBoardId = DEFAULT_BOARD_ID;
 let cachedBoards = [];
 
+if (isAdminMode && localStorage.getItem('forum_admin_unlocked') !== 'true') {
+    localStorage.setItem('forum_admin_unlocked', 'true');
+}
+
+function hasAdminAccess() {
+    return localStorage.getItem('forum_admin_unlocked') === 'true';
+}
+
 function makeBoardSlug(name) {
     const fallback = `board-${Date.now()}`;
     return (name || fallback)
@@ -101,6 +109,7 @@ function renderBoardHeader(boards) {
     if (boardTitle && activeBoard) boardTitle.textContent = activeBoard.name;
     if (boardDescription && activeBoard) boardDescription.textContent = activeBoard.description;
     if (boardAdminPanel) boardAdminPanel.style.display = isAdminMode ? 'flex' : 'none';
+    updateAdminToggle();
     if (!boardList) return;
 
     boardList.innerHTML = boards.map(board => `
@@ -109,7 +118,12 @@ function renderBoardHeader(boards) {
                 <span class="board-name">${escapeHTML(board.name)}</span>
                 <span class="board-desc">${escapeHTML(board.description)}</span>
             </button>
-            ${isAdminMode && board.id !== DEFAULT_BOARD_ID ? `<button class="board-delete-btn" style="display:block;" title="Удалить борду" onclick="deleteBoard('${escapeJSString(board.id)}','${escapeJSString(board.name)}')">Удалить</button>` : ''}
+            ${isAdminMode && board.id !== DEFAULT_BOARD_ID ? `
+                <div class="board-actions" style="display:flex;">
+                    <button class="board-action-btn edit" title="Изменить борду" onclick="editBoard('${escapeJSString(board.id)}')">Изм.</button>
+                    <button class="board-action-btn" title="Удалить борду" onclick="deleteBoard('${escapeJSString(board.id)}','${escapeJSString(board.name)}')">Удал.</button>
+                </div>
+            ` : ''}
         </div>
     `).join('');
 }
@@ -217,6 +231,52 @@ window.deleteBoard = async function(id, name) {
     if (currentBoardId === id) {
         setCurrentBoard(DEFAULT_BOARD_ID);
     }
+    loadPosts();
+};
+
+window.editBoard = async function(id) {
+    if (!isAdminMode || id === DEFAULT_BOARD_ID) return;
+    const board = cachedBoards.find(item => item.id === id);
+    if (!board || !board.metaPostId) return;
+
+    const nextName = prompt('Новое название борды:', board.name);
+    if (!nextName || !nextName.trim()) return;
+    const nextDescription = prompt('Новое описание борды:', board.description || 'Новая ветка форума');
+    if (nextDescription === null) return;
+
+    const updatedBoard = {
+        id: board.id,
+        name: nextName.trim(),
+        description: nextDescription.trim() || 'Новая ветка форума'
+    };
+
+    const { error } = await supabaseClient
+        .from('posts')
+        .update({ text: BOARD_META_PREFIX + JSON.stringify(updatedBoard) })
+        .eq('id', board.metaPostId);
+
+    if (error) {
+        alert('Ошибка изменения борды: ' + error.message);
+        return;
+    }
+
+    loadPosts();
+};
+
+function updateAdminToggle() {
+    const toggle = document.getElementById('adminToggle');
+    const checkbox = document.getElementById('adminModeSwitch');
+    if (!toggle || !checkbox) return;
+    const unlocked = hasAdminAccess();
+    toggle.style.display = unlocked ? 'flex' : 'none';
+    checkbox.checked = isAdminMode;
+}
+
+window.toggleAdminMode = function(enabled) {
+    if (!hasAdminAccess()) return;
+    isAdminMode = enabled;
+    localStorage.setItem('forum_admin_mode', enabled ? 'true' : 'false');
+    cancelReply();
     loadPosts();
 };
 
@@ -598,7 +658,9 @@ window.admin = function() {
     const pass = prompt("Пароль модератора:");
     if (pass === ADMIN_PASS) {
         isAdminMode = true; 
+        localStorage.setItem('forum_admin_unlocked', 'true');
         localStorage.setItem('forum_admin_mode', 'true');
+        updateAdminToggle();
         loadPosts(); 
         alert("Режим модератора активирован!");
     } else {
