@@ -153,8 +153,8 @@ function createPostHTML(post) {
         : '';
 
     const userReaction = hasUserReacted(post.id);
-    const likeBtnStyle = userReaction === 'likes' ? 'border-color: #248046; color: #248046; background: #1c2e24;' : '';
-    const dislikeBtnStyle = userReaction === 'dislikes' ? 'border-color: #da373c; color: #da373c; background: #2d1e22;' : '';
+    const likeBtnStyle = userReaction === 'likes' ? 'border-color: #ff5500; color: #ff5500; background: #2a1a10;' : '';
+    const dislikeBtnStyle = userReaction === 'dislikes' ? 'border-color: #e03c3c; color: #e03c3c; background: #2a1010;' : '';
 
     // Если к посту привязана картинка, генерируем для нее тег <img>
     const imageHTML = post.image 
@@ -164,23 +164,23 @@ function createPostHTML(post) {
     return `
         <div style="display: flex; align-items: flex-start; gap: 15px;">
             ${checkboxHTML}
-            <img src="${post.avatar || 'https://api.dicebear.com/7.x/bottts/svg?seed=default'}" style="width: 55px; height: 55px; border-radius: 50%; background: #202225; object-fit: cover; border: 2px solid #5865f2; flex-shrink: 0;">
+            <img src="${post.avatar || 'https://api.dicebear.com/7.x/bottts/svg?seed=default'}" style="width: 50px; height: 50px; border-radius: 50%; background: #111; object-fit: cover; border: 2px solid #ff5500; flex-shrink: 0;">
             <div style="flex: 1;">
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-                    <strong style="color: #fff; font-size: 18px;">${post.username || 'Аноним'}</strong>
-                    <span style="color: #72767d; font-size: 13px;">${formattedDate}</span>
+                    <strong style="color: #fff; font-size: 16px;">${post.username || 'Аноним'}</strong>
+                    <span style="color: #555; font-size: 12px;">${formattedDate}</span>
                 </div>
-                <div style="color: #dcddde; word-break: break-word; font-size: 17px; line-height: 1.4;">${post.text}</div>
+                <div style="color: #ccc; word-break: break-word; font-size: 15px; line-height: 1.5;">${post.text}</div>
                 
                 ${imageHTML}
                 
-                <div style="display: flex; gap: 12px; align-items: center; margin-top: 12px;">
+                <div style="display: flex; gap: 10px; align-items: center; margin-top: 12px;">
                     <button class="reaction-btn" style="${likeBtnStyle}" onclick="addReaction(${post.id}, 'likes', ${post.likes || 0}, ${post.dislikes || 0})">👍 <span>${post.likes || 0}</span></button>
                     <button class="reaction-btn" style="${dislikeBtnStyle}" onclick="addReaction(${post.id}, 'dislikes', ${post.likes || 0}, ${post.dislikes || 0})">👎 <span>${post.dislikes || 0}</span></button>
-                    <button style="background: none; border: none; color: #5865f2; font-weight: bold; cursor: pointer; font-size: 15px; margin-left: 10px;" onclick="setReplyTarget(${post.id}, '${post.username}')">Ответить</button>
+                    <button class="reply-link-btn" onclick="setReplyTarget(${post.id}, '${post.username}')">Ответить</button>
                 </div>
             </div>
-            <button class="del-btn" style="display: ${isAdminMode ? 'block' : 'none'}; color: #da373c; background: none; border: none; cursor: pointer; font-weight: bold; font-size: 15px;" onclick="deletePost(${post.id})">удалить</button>
+            <button class="del-btn" style="display: ${isAdminMode ? 'block' : 'none'};" onclick="deletePost(${post.id})">удалить</button>
         </div>
     `;
 }
