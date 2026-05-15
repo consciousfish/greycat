@@ -26,6 +26,8 @@
             color: #ff5500;
             text-transform: lowercase;
             letter-spacing: -0.5px;
+            cursor: pointer;
+            user-select: none;
         }
         header nav {
             display: flex;
@@ -449,7 +451,7 @@
 <body>
 
     <header>
-        <div class="logo" ondblclick="admin()">greycat781</div>
+        <div class="logo" onclick="if(event.ctrlKey) admin()">greycat781</div>
         <nav>
             <a href="index.html">Главная</a>
             <a href="memes.html">Мемы</a>
