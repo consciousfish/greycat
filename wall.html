@@ -186,14 +186,49 @@
             border-left: 3px solid #ff5500;
             position: relative;
         }
+        /* Replies toggle button */
+        .replies-toggle-wrapper {
+            margin-top: 14px;
+        }
+        .replies-toggle-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #ccc;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            padding: 5px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            transition: background 0.15s, border-color 0.15s, color 0.15s;
+            letter-spacing: 0.02em;
+        }
+        .replies-toggle-btn:hover {
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,85,0,0.4);
+            color: #fff;
+        }
+        .replies-arrow {
+            font-size: 11px;
+            display: inline-block;
+        }
         .replies-container {
-            margin-left: 46px;
+            margin-left: 20px;
             border-left: 2px dashed #2a2a2a;
-            padding-left: 20px;
+            padding-left: 16px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-top: 14px;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        /* Reply posts are smaller */
+        .reply-post {
+            padding: 12px 14px !important;
+            background-color: #222427 !important;
         }
 
         /* Reaction buttons */
