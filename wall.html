@@ -4,135 +4,148 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>greycat781 — Стена</title>
+    <link rel="stylesheet" href="style.css">
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #202225;
-            color: #fff;
-            font-family: sans-serif;
-        }
+        /* ── Wall-specific styles in SoundCloud palette ── */
+
         header {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
-            padding: 10px 40px;
-            background-color: #18191c;
+            gap: 14px;
+            padding: 14px 40px;
+            background-color: #181818;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #2a2a2a;
         }
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #5865f2;
+        header .logo {
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: #ff5500;
+            text-transform: lowercase;
+            letter-spacing: -0.5px;
         }
-        nav {
+        header nav {
             display: flex;
-            gap: 20px;
+            gap: 6px;
             align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
         }
-        nav a {
-            color: #b9bbbe;
+        header nav a {
+            color: #999999;
             text-decoration: none;
-            font-size: 16px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            padding: 7px 16px;
+            border-radius: 20px;
+            border: 1px solid transparent;
+            transition: color 0.15s, border-color 0.15s;
         }
-        nav a:hover {
-            color: #fff;
-        }
+        header nav a:hover { color: #fff; border-color: #3a3a3a; }
+        header nav a.active { color: #fff; }
         .discord-btn {
-            background-color: #5865f2;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 5px;
-            font-weight: bold;
+            background-color: #ff5500 !important;
+            color: white !important;
+            border-radius: 20px !important;
+            font-weight: 600 !important;
+            border: none !important;
         }
+        .discord-btn:hover { background-color: #ff7733 !important; }
+
         .main-content {
             max-width: 850px;
-            margin: 40px auto;
+            margin: 120px auto 40px;
             padding: 0 20px;
             text-align: center;
         }
         h1 {
-            font-size: 32px;
-            margin-bottom: 30px;
+            font-size: 2rem;
+            margin-bottom: 28px;
+            font-weight: 900;
+            letter-spacing: -1px;
         }
+
+        /* User profile block */
         .comment-box-wrapper {
-            background-color: #2f3136;
-            border-radius: 6px;
-            padding: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            background-color: #1f1f1f;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 28px;
+            border: 1px solid #2a2a2a;
         }
         .reply-indicator {
             display: none;
             justify-content: space-between;
             align-items: center;
-            background: #18191c;
+            background: #111111;
             padding: 8px 12px;
             border-radius: 4px;
             margin-bottom: 10px;
-            font-size: 14px;
-            color: #b9bbbe;
-            border-left: 4px solid #aa8ed6;
+            font-size: 13px;
+            color: #999;
+            border-left: 3px solid #ff5500;
         }
         .input-container {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             align-items: center;
         }
-        input {
+        .input-container input {
             flex: 1;
-            padding: 15px;
-            background-color: #202225;
-            border: 1px solid #18191c;
+            padding: 13px 16px;
+            background-color: #2a2a2a;
+            border: 1px solid #333;
             border-radius: 6px;
             color: white;
-            font-size: 18px;
+            font-size: 0.95rem;
             outline: none;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.15s;
         }
-        input:focus {
-            border-color: #5865f2;
-        }
+        .input-container input:focus { border-color: #ff5500; }
         .attach-btn {
-            background-color: #4f545c;
-            color: white;
-            border: none;
-            padding: 15px 18px;
-            border-radius: 5px;
-            font-size: 18px;
+            background-color: #2a2a2a;
+            color: #ccc;
+            border: 1px solid #333;
+            padding: 13px 16px;
+            border-radius: 6px;
+            font-size: 16px;
             cursor: pointer;
-            font-weight: bold;
-            transition: background 0.2s;
+            transition: background 0.15s, border-color 0.15s;
         }
-        .attach-btn:hover {
-            background-color: #686d73;
-        }
+        .attach-btn:hover { background-color: #333; border-color: #ff5500; }
         .send-btn {
-            background-color: #248046;
+            background-color: #ff5500;
             color: white;
             border: none;
-            padding: 15px 30px;
-            border-radius: 5px;
-            font-size: 18px;
+            padding: 13px 26px;
+            border-radius: 6px;
+            font-size: 0.9rem;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.15s;
         }
-        .send-btn:hover {
-            background-color: #1a6535;
-        }
+        .send-btn:hover { background-color: #ff7733; }
         .send-btn:disabled, .attach-btn:disabled {
-            background-color: #4f545c;
+            opacity: 0.5;
             cursor: not-allowed;
-            opacity: 0.6;
         }
-        /* Блок превью прикрепленного медиа */
+
+        /* Media preview */
         .preview-media-container {
             display: none;
             position: relative;
             margin-top: 12px;
-            background: #18191c;
+            background: #111;
             padding: 10px;
             border-radius: 6px;
             text-align: left;
             max-width: 200px;
+            border: 1px solid #2a2a2a;
         }
         .preview-media-container img {
             max-width: 100%;
@@ -144,70 +157,133 @@
             position: absolute;
             top: 5px;
             right: 5px;
-            background: #da373c;
+            background: #e03c3c;
             color: white;
             border: none;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 14px;
-            line-height: 20px;
+            font-size: 13px;
+            line-height: 22px;
             text-align: center;
         }
+
+        /* Posts container */
         #postsContainer {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 16px;
             text-align: left;
             margin-top: 20px;
         }
         .post {
-            background-color: #2f3136;
-            padding: 20px;
+            background-color: #1f1f1f;
+            padding: 18px 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            border: 1px solid #2a2a2a;
+            border-left: 3px solid #ff5500;
             position: relative;
         }
         .replies-container {
-            margin-left: 50px;
-            border-left: 2px dashed #4f545c;
+            margin-left: 46px;
+            border-left: 2px dashed #2a2a2a;
             padding-left: 20px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            margin-top: 15px;
+            gap: 12px;
+            margin-top: 14px;
         }
+
+        /* Reaction buttons */
         .reaction-btn {
-            background: #18191c;
-            border: 1px solid #202225;
-            color: #b9bbbe;
-            padding: 6px 14px;
-            border-radius: 4px;
+            background: #111111;
+            border: 1px solid #2a2a2a;
+            color: #999;
+            padding: 5px 13px;
+            border-radius: 20px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-weight: bold;
-            transition: all 0.2s;
+            gap: 5px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.15s;
         }
         .reaction-btn:hover {
             color: #fff;
-            border-color: #5865f2;
-            background: #202225;
+            border-color: #ff5500;
+            background: #1f1f1f;
         }
-        /* Стили картинок в самих постах */
+
+        /* Post images */
         .post-attached-image {
             max-width: 100%;
             max-height: 350px;
             border-radius: 6px;
             margin-top: 12px;
             display: block;
-            border: 1px solid #202225;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            border: 1px solid #2a2a2a;
         }
+
+        /* User profile strip */
+        #userProfile {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background: #181818;
+            padding: 14px 18px;
+            border-radius: 8px;
+            border: 1px solid #2a2a2a;
+        }
+        #userProfile #userStatus {
+            color: #fff;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        #authBtn {
+            background: #ff5500;
+            color: white;
+            border: none;
+            padding: 9px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.15s;
+        }
+        #authBtn:hover { background: #ff7733; }
+
+        /* Reply btn inline */
+        .reply-link-btn {
+            background: none;
+            border: none;
+            color: #ff5500;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            padding: 0;
+            margin-left: 10px;
+            transition: color 0.15s;
+        }
+        .reply-link-btn:hover { color: #ff7733; }
+
+        /* Delete / admin */
+        .del-btn {
+            color: #e03c3c;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+        }
+        .del-btn:hover { text-decoration: underline; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -218,7 +294,7 @@
         <nav>
             <a href="index.html">Главная</a>
             <a href="memes.html">Мемы</a>
-            <a href="wall.html" style="color: #fff;">Стена</a>
+            <a href="wall.html" class="active">Стена</a>
             <a href="#" class="discord-btn">Discord</a>
         </nav>
     </header>
@@ -226,41 +302,38 @@
     <div class="main-content">
         <h1>Стена приколов</h1>
 
-        <div id="userProfile" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; background: #18191c; padding: 15px 20px; border-radius: 8px; border: 1px solid #2f3136;">
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <img id="userAvatar" src="" alt="Avatar" style="width: 55px; height: 55px; border-radius: 50%; display: none; border: 2px solid #5865f2; object-fit: cover;">
+        <div id="userProfile">
+            <div style="display: flex; align-items: center; gap: 14px;">
+                <img id="userAvatar" src="" alt="Avatar" style="width: 50px; height: 50px; border-radius: 50%; display: none; border: 2px solid #ff5500; object-fit: cover;">
                 <div style="display: flex; flex-direction: column; gap: 4px; text-align: left;">
-                    <span id="userStatus" style="color: #b9bbbe; font-weight: bold; font-size: 16px;">Вы вошли как гость</span>
-                    <label style="color: #5865f2; font-size: 14px; cursor: pointer; text-decoration: underline;">
+                    <span id="userStatus" style="color: #999; font-weight: 600; font-size: 15px;">Вы вошли как гость</span>
+                    <label style="color: #ff5500; font-size: 13px; cursor: pointer; text-decoration: underline;">
                         Загрузить свою аватарку
                         <input type="file" id="avatarLoader" accept="image/*" onchange="uploadCustomAvatar(event)" style="display: none;">
                     </label>
                 </div>
             </div>
-            <button id="authBtn" onclick="loginUser()" style="background: #5865f2; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 15px;">Войти / Сменить ник</button>
+            <button id="authBtn" onclick="loginUser()">Войти / Сменить ник</button>
         </div>
 
         <div class="comment-box-wrapper">
             <div id="replyIndicator" class="reply-indicator">
                 <span id="replyIndicatorText">Вы отвечаете пользователю</span>
-                <button onclick="cancelReply()" style="background:none; border:none; color:#da373c; cursor:pointer; font-weight:bold;">[Отмена]</button>
+                <button onclick="cancelReply()" style="background:none; border:none; color:#e03c3c; cursor:pointer; font-weight:bold; font-family:'Inter',sans-serif;">[Отмена]</button>
             </div>
             <div class="input-container">
                 <button class="attach-btn" title="Прикрепить фото или GIF" onclick="document.getElementById('mediaUploader').click()">🖼️</button>
                 <input type="file" id="mediaUploader" accept="image/*,image/gif" onchange="handleMediaSelect(event)" style="display: none;">
-                
                 <input type="text" id="postInput" placeholder="Напиши что-нибудь на стене...">
                 <button class="send-btn" id="sendBtn">Отправить</button>
             </div>
-
             <div id="previewMediaContainer" class="preview-media-container">
                 <button class="remove-preview-btn" onclick="clearMediaPreview()">×</button>
                 <img id="previewMediaImg" src="" alt="Превью">
             </div>
         </div>
 
-        <div id="postsContainer">
-            </div>
+        <div id="postsContainer"></div>
     </div>
 
     <script src="script.js"></script>
