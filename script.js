@@ -89,6 +89,19 @@ window.cancelReply = function() {
     if (input) input.placeholder = "Напиши что-нибудь на стене...";
 };
 
+// Проверяет, ставил ли уже юзер реакцию на этот пост
+function hasUserReacted(postId) {
+    const reactedPosts = JSON.parse(localStorage.getItem('reacted_posts') || '{}');
+    return reactedPosts[postId] || null; // вернет 'likes', 'dislikes' или null
+}
+
+// Запоминает реакцию юзера локально
+function saveUserReaction(postId, type) {
+    const reactedPosts = JSON.parse(localStorage.getItem('reacted_posts') || '{}');
+    reactedPosts[postId] = type;
+    localStorage.setItem('reacted_posts', JSON.stringify(reactedPosts));
+}
+
 // Генератор HTML постов
 function createPostHTML(post) {
     const postDate = post.created_at ? new Date(post.created_at) : new Date();
@@ -97,6 +110,11 @@ function createPostHTML(post) {
     const checkboxHTML = isAdminMode 
         ? `<input type="checkbox" class="admin-select-checkbox" value="${post.id}" style="margin-right: 15px; width: 22px; height: 22px; cursor: pointer; align-self: center;">` 
         : '';
+
+    // Выясняем, нажимал ли пользователь лайк или дизлайк на этот пост, чтобы визуально подсветить кнопку
+    const userReaction = hasUserReacted(post.id);
+    const likeBtnStyle = userReaction === 'likes' ? 'border-color: #248046; color: #248046; background: #1c2e24;' : '';
+    const dislikeBtnStyle = userReaction === 'dislikes' ? 'border-color: #da373c; color: #da373c; background: #2d1e22;' : '';
 
     return `
         <div style="display: flex; align-items: flex-start; gap: 15px;">
@@ -110,8 +128,8 @@ function createPostHTML(post) {
                 <div style="color: #dcddde; word-break: break-word; font-size: 17px; line-height: 1.4; margin-bottom: 12px;">${post.text}</div>
                 
                 <div style="display: flex; gap: 12px; align-items: center;">
-                    <button class="reaction-btn" onclick="addReaction(${post.id}, 'likes', ${post.likes || 0})">👍 <span>${post.likes || 0}</span></button>
-                    <button class="reaction-btn" onclick="addReaction(${post.id}, 'dislikes', ${post.dislikes || 0})">👎 <span>${post.dislikes || 0}</span></button>
+                    <button class="reaction-btn" style="${likeBtnStyle}" onclick="addReaction(${post.id}, 'likes', ${post.likes || 0})">👍 <span>${post.likes || 0}</span></button>
+                    <button class="reaction-btn" style="${dislikeBtnStyle}" onclick="addReaction(${post.id}, 'dislikes', ${post.dislikes || 0})">👎 <span>${post.dislikes || 0}</span></button>
                     <button style="background: none; border: none; color: #5865f2; font-weight: bold; cursor: pointer; font-size: 15px; margin-left: 10px;" onclick="setReplyTarget(${post.id}, '${post.username}')">Ответить</button>
                 </div>
             </div>
@@ -171,7 +189,7 @@ async function loadPosts() {
         children.forEach(child => {
             const childDiv = document.createElement('div');
             childDiv.className = 'post';
-            childDiv.style.backgroundColor = '#25272a'; // Чуть темнее для визуальной ветки
+            childDiv.style.backgroundColor = '#25272a'; 
             childDiv.innerHTML = createPostHTML(child);
             
             repliesWrapper.appendChild(childDiv);
@@ -191,8 +209,23 @@ async function loadPosts() {
     });
 }
 
-// Фикс лайков: отправляем апдейт в БД
+// Защищенная функция лайков: один человек — одна реакция
 window.addReaction = async function(id, type, currentCount) {
+    const previousReaction = hasUserReacted(id);
+
+    // Если пользователь нажимает на то же самое, что уже ставил — просто игнорим или даем знать
+    if (previousReaction === type) {
+        alert("Вы уже поставили эту реакцию!");
+        return;
+    }
+
+    // Если пользователь передумывает (например, стоял лайк, а он жмет дизлайк)
+    if (previousReaction && previousReaction !== type) {
+        alert("Вы уже оставили своё мнение под этим постом!");
+        return;
+    }
+
+    // Шлём инкремент в базу данных
     const { error } = await supabaseClient
         .from('posts')
         .update({ [type]: currentCount + 1 })
@@ -201,7 +234,8 @@ window.addReaction = async function(id, type, currentCount) {
     if (error) {
         console.error("Ошибка обновления лайка:", error.message);
     } else {
-        loadPosts();
+        saveUserReaction(id, type); // Запоминаем выбор в браузере
+        loadPosts(); // Обновляем счётчики на экране
     }
 };
 
