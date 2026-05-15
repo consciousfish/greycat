@@ -102,7 +102,13 @@
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 10px;
         }
+        .board-item {
+            display: flex;
+            align-items: stretch;
+            gap: 8px;
+        }
         .board-card {
+            flex: 1;
             background: #181818;
             border: 1px solid #2a2a2a;
             border-left: 3px solid transparent;
@@ -132,6 +138,25 @@
             color: #999;
             font-size: 12px;
             line-height: 1.35;
+        }
+        .board-delete-btn {
+            display: none;
+            align-self: stretch;
+            background: #2a1010;
+            color: #e03c3c;
+            border: 1px solid rgba(224,60,60,0.35);
+            border-radius: 8px;
+            padding: 0 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 900;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.15s, border-color 0.15s, color 0.15s;
+        }
+        .board-delete-btn:hover {
+            background: #3a1414;
+            border-color: #e03c3c;
+            color: #fff;
         }
         .board-admin-panel {
             display: none;
@@ -429,7 +454,6 @@
             <a href="index.html">Главная</a>
             <a href="memes.html">Мемы</a>
             <a href="wall.html" class="active">Форум</a>
-            <a href="#" onclick="admin(); return false;">Админ</a>
             <a href="#" class="discord-btn">Discord</a>
         </nav>
     </header>

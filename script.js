@@ -104,10 +104,13 @@ function renderBoardHeader(boards) {
     if (!boardList) return;
 
     boardList.innerHTML = boards.map(board => `
-        <button class="board-card ${board.id === currentBoardId ? 'active' : ''}" onclick="openBoard('${escapeJSString(board.id)}')">
-            <span class="board-name">${escapeHTML(board.name)}</span>
-            <span class="board-desc">${escapeHTML(board.description)}</span>
-        </button>
+        <div class="board-item">
+            <button class="board-card ${board.id === currentBoardId ? 'active' : ''}" onclick="openBoard('${escapeJSString(board.id)}')">
+                <span class="board-name">${escapeHTML(board.name)}</span>
+                <span class="board-desc">${escapeHTML(board.description)}</span>
+            </button>
+            ${isAdminMode && board.id !== DEFAULT_BOARD_ID ? `<button class="board-delete-btn" style="display:block;" title="Удалить борду" onclick="deleteBoard('${escapeJSString(board.id)}','${escapeJSString(board.name)}')">×</button>` : ''}
+        </div>
     `).join('');
 }
 
@@ -121,7 +124,7 @@ function collectBoards(data) {
     data.forEach(post => {
         const board = parseBoardMeta(post);
         if (board && !boards.some(existing => existing.id === board.id)) {
-            boards.push(board);
+            boards.push({ ...board, metaPostId: post.id });
         }
     });
 
@@ -178,6 +181,43 @@ window.createBoard = async function() {
     nameInput.value = '';
     if (descInput) descInput.value = '';
     openBoard(slug);
+};
+
+window.deleteBoard = async function(id, name) {
+    if (!isAdminMode || id === DEFAULT_BOARD_ID) return;
+    if (!confirm(`Удалить борду "${name}" и все посты внутри неё?`)) return;
+
+    const { data, error } = await supabaseClient
+        .from('posts')
+        .select('id,parent_id,text')
+        .order('id', { ascending: true });
+
+    if (error) {
+        alert('Ошибка удаления борды: ' + error.message);
+        return;
+    }
+
+    const boardPosts = (data || []).filter(post => getPostBoardId(post) === id && !parseBoardMeta(post));
+    const boardPostIds = new Set(boardPosts.map(post => post.id));
+    const rootPosts = boardPosts.filter(post => !post.parent_id || !boardPostIds.has(post.parent_id));
+
+    for (const post of rootPosts) {
+        await deletePostAndReplies(post.id);
+    }
+
+    const boardMeta = (data || []).find(post => {
+        const board = parseBoardMeta(post);
+        return board && board.id === id;
+    });
+
+    if (boardMeta) {
+        await supabaseClient.from('posts').delete().eq('id', boardMeta.id);
+    }
+
+    if (currentBoardId === id) {
+        setCurrentBoard(DEFAULT_BOARD_ID);
+    }
+    loadPosts();
 };
 
 window.loginUser = function() {
