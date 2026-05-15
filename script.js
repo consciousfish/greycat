@@ -330,14 +330,16 @@ function updateProfileUI() {
 window.handleMediaSelect = function(event) {
     const file = event.target.files[0];
     if (!file) return;
-    if (file.size > 2621440) {
-        alert("Файл слишком большой! Выберите картинку или GIF весом до 2.5 МБ.");
+
+    const maxOriginalSize = 15 * 1024 * 1024;
+    if (file.size > maxOriginalSize) {
+        alert("Файл слишком большой! Выберите картинку до 15 МБ.");
         event.target.value = "";
         return;
     }
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        attachedMediaBase64 = e.target.result;
+
+    const finishPreview = function(dataUrl) {
+        attachedMediaBase64 = dataUrl;
         const container = document.getElementById('previewMediaContainer');
         const img = document.getElementById('previewMediaImg');
         if (container && img) {
@@ -345,8 +347,53 @@ window.handleMediaSelect = function(event) {
             container.style.display = 'block';
         }
     };
+
+    if (file.type.startsWith('image/') && file.type !== 'image/gif' && file.size > 2621440) {
+        compressImageFile(file)
+            .then(finishPreview)
+            .catch(() => {
+                alert("Не получилось сжать изображение. Попробуйте другую картинку.");
+                event.target.value = "";
+            });
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        finishPreview(e.target.result);
+    };
     reader.readAsDataURL(file);
 };
+
+function compressImageFile(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = reject;
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onerror = reject;
+            img.onload = function() {
+                const maxSide = 1600;
+                const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+                const canvas = document.createElement('canvas');
+                canvas.width = Math.max(1, Math.round(img.width * scale));
+                canvas.height = Math.max(1, Math.round(img.height * scale));
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                let quality = 0.82;
+                let dataUrl = canvas.toDataURL('image/jpeg', quality);
+                while (dataUrl.length > 2600000 && quality > 0.45) {
+                    quality -= 0.08;
+                    dataUrl = canvas.toDataURL('image/jpeg', quality);
+                }
+                resolve(dataUrl);
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
 
 window.clearMediaPreview = function() {
     attachedMediaBase64 = null;
