@@ -411,7 +411,7 @@ function createPostHTML(post) {
     return `
         <div style="display:flex;align-items:flex-start;gap:14px;">
             ${checkboxHTML}
-            <img src="${post.avatar || 'https://api.dicebear.com/7.x/bottts/svg?seed=default'}" style="width:56px;height:56px;border-radius:50%;background:#111;object-fit:cover;border:2px solid #ff5500;flex-shrink:0;">
+            <img src="${post.avatar || 'https://api.dicebear.com/7.x/bottts/svg?seed=default'}" style="width:72px;height:72px;border-radius:50%;background:#111;object-fit:cover;border:2px solid #ff5500;flex-shrink:0;">
             <div style="flex:1;min-width:0;">
                 <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px;">
                     <strong style="color:#fff;font-size:14px;">${post.username || 'Аноним'}</strong>
