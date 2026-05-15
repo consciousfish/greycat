@@ -110,7 +110,7 @@
         #postsContainer {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
             text-align: left;
             margin-top: 20px;
         }
@@ -121,10 +121,10 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             position: relative;
         }
-        /* Стилизация вложенных ответов-веток (Реддит-стиль) */
+        /* Контейнер веток как на сайтах с фильмами */
         .replies-container {
-            margin-left: 40px;
-            border-left: 2px solid #4f545c;
+            margin-left: 50px;
+            border-left: 2px dashed #4f545c;
             padding-left: 20px;
             display: flex;
             flex-direction: column;
@@ -135,7 +135,7 @@
             background: #18191c;
             border: 1px solid #202225;
             color: #b9bbbe;
-            padding: 6px 12px;
+            padding: 6px 14px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 14px;
@@ -143,10 +143,12 @@
             align-items: center;
             gap: 6px;
             font-weight: bold;
+            transition: all 0.2s;
         }
         .reaction-btn:hover {
             color: #fff;
             border-color: #5865f2;
+            background: #202225;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
