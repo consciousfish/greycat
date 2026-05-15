@@ -1,246 +1,200 @@
-const SUPABASE_URL = 'https://uyjyjkualjybzfckmgdm.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_QADVddyaye_VV4M3JIEQDQ_iE0YF0lH';
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>greycat781 — Стена</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #202225;
+            color: #fff;
+            font-family: sans-serif;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 40px;
+            background-color: #18191c;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #5865f2;
+        }
+        nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        nav a {
+            color: #b9bbbe;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        nav a:hover {
+            color: #fff;
+        }
+        .discord-btn {
+            background-color: #5865f2;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .main-content {
+            max-width: 850px;
+            margin: 40px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 32px;
+            margin-bottom: 30px;
+        }
+        .comment-box-wrapper {
+            background-color: #2f3136;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .reply-indicator {
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            background: #18191c;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #b9bbbe;
+            border-left: 4px solid #aa8ed6;
+        }
+        .input-container {
+            display: flex;
+            gap: 12px;
+        }
+        input {
+            flex: 1;
+            padding: 15px;
+            background-color: #202225;
+            border: 1px solid #18191c;
+            border-radius: 6px;
+            color: white;
+            font-size: 18px;
+            outline: none;
+        }
+        input:focus {
+            border-color: #5865f2;
+        }
+        .send-btn {
+            background-color: #248046;
+            color: white;
+            border: none;
+            padding: 0 30px;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .send-btn:hover {
+            background-color: #1a6535;
+        }
+        .send-btn:disabled {
+            background-color: #4f545c;
+            cursor: not-allowed;
+        }
+        #postsContainer {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            text-align: left;
+            margin-top: 20px;
+        }
+        .post {
+            background-color: #2f3136;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        /* Стилизация вложенных ответов-веток (Реддит-стиль) */
+        .replies-container {
+            margin-left: 40px;
+            border-left: 2px solid #4f545c;
+            padding-left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .reaction-btn {
+            background: #18191c;
+            border: 1px solid #202225;
+            color: #b9bbbe;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: bold;
+        }
+        .reaction-btn:hover {
+            color: #fff;
+            border-color: #5865f2;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
 
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    <header>
+        <div class="logo">greycat781</div>
+        <nav>
+            <a href="index.html">Главная</a>
+            <a href="memes.html">Мемы</a>
+            <a href="wall.html" style="color: #fff;">Стена</a>
+            <a href="#" class="discord-btn">Discord</a>
+        </nav>
+    </header>
 
-const ADMIN_PASS = "cat781grey";
-let isAdminMode = false; 
-let isSending = false; // Флаг для защиты от двойных/множественных кликов
+    <div class="main-content">
+        <h1>Стена приколов</h1>
 
-// Функция авторизации (сохраняет ник и генерирует аватарку ТОЛЬКО если нет кастомной)
-window.loginUser = function() {
-    const name = prompt("Введите ваш никнейм для комментирования:");
-    if (!name || !name.trim()) return;
-
-    const trimmedName = name.trim();
-    localStorage.setItem('chat_username', trimmedName);
-
-    // БАГФИКС: Проверяем, есть ли уже кастомная аватарка (Base64). Если нет — ставим робота
-    const existingAvatar = localStorage.getItem('chat_avatar');
-    if (!existingAvatar || !existingAvatar.startsWith('data:image')) {
-        const randomAvatar = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(trimmedName)}`;
-        localStorage.setItem('chat_avatar', randomAvatar);
-    }
-
-    updateProfileUI();
-};
-
-// Функция обработки кастомной аватарки (конвертация картинки в Base64)
-window.uploadCustomAvatar = function(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    let username = localStorage.getItem('chat_username');
-    if (!username) {
-        window.loginUser();
-        username = localStorage.getItem('chat_username');
-        if (!username) return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const base64Image = e.target.result;
-        localStorage.setItem('chat_avatar', base64Image); 
-        updateProfileUI();
-        alert("Аватарка успешно сохранена!");
-    };
-    reader.readAsDataURL(file);
-};
-
-// Обновление плашки профиля на экране
-function updateProfileUI() {
-    const username = localStorage.getItem('chat_username');
-    const avatar = localStorage.getItem('chat_avatar');
-    
-    const userAvatarImg = document.getElementById('userAvatar');
-    const userStatusSpan = document.getElementById('userStatus');
-    const authBtn = document.getElementById('authBtn');
-
-    if (username) {
-        if (userStatusSpan) userStatusSpan.textContent = username;
-        if (authBtn) authBtn.textContent = 'Сменить ник';
-    }
-    if (avatar && userAvatarImg) {
-        userAvatarImg.src = avatar;
-        userAvatarImg.style.display = 'block';
-    }
-}
-
-// Загрузка сообщений со стены
-async function loadPosts() {
-    const container = document.getElementById('postsContainer');
-    if (!container) return; 
-
-    const { data, error } = await supabaseClient
-        .from('posts')
-        .select('*')
-        .order('id', { ascending: false });
-
-    if (error) {
-        console.error('Ошибка загрузки постов:', error.message);
-        return;
-    }
-
-    container.innerHTML = '';
-    
-    if (isAdminMode) {
-        const massDelBtn = document.createElement('button');
-        massDelBtn.id = 'massDeleteBtn';
-        massDelBtn.textContent = 'Удалить выбранные сообщения';
-        massDelBtn.style = 'background: #da373c; color: white; border: none; padding: 12px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-bottom: 15px; width: 100%; font-size: 16px;';
-        massDelBtn.onclick = deleteSelectedPosts;
-        container.appendChild(massDelBtn);
-    }
-
-    data.forEach(post => {
-        const div = document.createElement('div');
-        div.className = 'post';
-        
-        // Форматирование даты создания поста
-        const postDate = post.created_at ? new Date(post.created_at) : new Date();
-        const formattedDate = postDate.toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-
-        const checkboxHTML = isAdminMode 
-            ? `<input type="checkbox" class="admin-select-checkbox" value="${post.id}" style="margin-right: 15px; width: 22px; height: 22px; cursor: pointer;">` 
-            : '';
-
-        // Большой размер карточек (аватарки 55px, тексты и ники увеличены)
-        div.innerHTML = `
-            <div style="display: flex; align-items: flex-start; gap: 15px;">
-                ${checkboxHTML}
-                <img src="${post.avatar || 'https://api.dicebear.com/7.x/bottts/svg?seed=default'}" style="width: 55px; height: 55px; border-radius: 50%; background: #202225; object-fit: cover; border: 2px solid #5865f2; flex-shrink: 0;">
-                <div style="flex: 1;">
-                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-                        <strong style="color: #fff; font-size: 18px;">${post.username || 'Аноним'}</strong>
-                        <span style="color: #72767d; font-size: 13px;">${formattedDate}</span>
-                    </div>
-                    <div style="color: #dcddde; word-break: break-word; font-size: 17px; line-height: 1.4; margin-bottom: 12px;">${post.text}</div>
-                    
-                    <div style="display: flex; gap: 12px; align-items: center;">
-                        <button class="reaction-btn" onclick="addReaction(${post.id}, 'likes', ${post.likes || 0})">👍 <span>${post.likes || 0}</span></button>
-                        <button class="reaction-btn" onclick="addReaction(${post.id}, 'dislikes', ${post.dislikes || 0})">👎 <span>${post.dislikes || 0}</span></button>
-                        <button style="background: none; border: none; color: #5865f2; font-weight: bold; cursor: pointer; font-size: 15px; margin-left: 10px;" onclick="replyToUser('${post.username}')">Ответить</button>
-                    </div>
+        <div id="userProfile" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; background: #18191c; padding: 15px 20px; border-radius: 8px; border: 1px solid #2f3136;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <img id="userAvatar" src="" alt="Avatar" style="width: 55px; height: 55px; border-radius: 50%; display: none; border: 2px solid #5865f2; object-fit: cover;">
+                <div style="display: flex; flex-direction: column; gap: 4px; text-align: left;">
+                    <span id="userStatus" style="color: #b9bbbe; font-weight: bold; font-size: 16px;">Вы вошли как гость</span>
+                    <label style="color: #5865f2; font-size: 14px; cursor: pointer; text-decoration: underline;">
+                        Загрузить свою аватарку
+                        <input type="file" id="avatarLoader" accept="image/*" onchange="uploadCustomAvatar(event)" style="display: none;">
+                    </label>
                 </div>
-                <button class="del-btn" style="display: ${isAdminMode ? 'block' : 'none'}; color: #da373c; background: none; border: none; cursor: pointer; font-weight: bold; font-size: 15px;" onclick="deletePost(${post.id})">удалить</button>
             </div>
-        `;
-        container.appendChild(div);
-    });
-}
+            <button id="authBtn" onclick="loginUser()" style="background: #5865f2; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 15px;">Войти / Сменить ник</button>
+        </div>
 
-// Функция ответа (добавляет упоминание в инпут)
-window.replyToUser = function(username) {
-    const input = document.getElementById('postInput');
-    if (!input) return;
-    input.value = `@${username}, ` + input.value;
-    input.focus();
-};
+        <div class="comment-box-wrapper">
+            <div id="replyIndicator" class="reply-indicator">
+                <span id="replyIndicatorText">Вы отвечаете пользователю</span>
+                <button onclick="cancelReply()" style="background:none; border:none; color:#da373c; cursor:pointer; font-weight:bold;">[Отмена]</button>
+            </div>
+            <div class="input-container">
+                <input type="text" id="postInput" placeholder="Напиши что-нибудь на стене...">
+                <button class="send-btn" id="sendBtn">Отправить</button>
+            </div>
+        </div>
 
-// Функция добавления лайка / дизлайка
-window.addReaction = function(id, type, currentCount) {
-    // Чтобы не спамить в БД, отключаем клики на долю секунды
-    supabaseClient.from('posts').update({ [type]: currentCount + 1 }).eq('id', id)
-    .then(({ error }) => {
-        if (!error) loadPosts();
-    });
-};
+        <div id="postsContainer">
+            </div>
+    </div>
 
-// Отправка нового сообщения на стену
-async function addPost() {
-    if (isSending) return; // ЗАЩИТА ОТ СПАМА: Если запрос выполняется, игнорируем клик
-
-    let username = localStorage.getItem('chat_username');
-    let avatar = localStorage.getItem('chat_avatar');
-
-    if (!username) {
-        window.loginUser();
-        username = localStorage.getItem('chat_username');
-        avatar = localStorage.getItem('chat_avatar');
-        if (!username) return; 
-    }
-
-    const input = document.getElementById('postInput');
-    if (!input) return;
-    
-    const text = input.value.trim();
-    if (!text) return;
-
-    // Включаем блокировку кнопки отправки
-    isSending = true;
-    const sendBtn = document.getElementById('sendBtn');
-    if (sendBtn) sendBtn.disabled = true;
-
-    const { error } = await supabaseClient.from('posts').insert([{ 
-        text: text,
-        username: username,
-        avatar: avatar
-    }]);
-
-    // Выключаем блокировку
-    isSending = false;
-    if (sendBtn) sendBtn.disabled = false;
-
-    if (error) {
-        alert('Ошибка базы данных: ' + error.message);
-        console.error(error);
-    } else {
-        input.value = '';
-        loadPosts();
-    }
-}
-
-// Удаление одного сообщения (Админка)
-async function deletePost(id) {
-    const { error } = await supabaseClient.from('posts').delete().eq('id', id);
-    if (!error) loadPosts();
-}
-
-// Массовое удаление выделенных постов
-async function deleteSelectedPosts() {
-    const checkboxes = document.querySelectorAll('.admin-select-checkbox:checked');
-    if (checkboxes.length === 0) {
-        alert("Вы не выбрали ни одного сообщения!");
-        return;
-    }
-
-    if (!confirm(`Удалить выбранные сообщения (${checkboxes.length} шт.)?`)) return;
-
-    const idsToDelete = Array.from(checkboxes).map(cb => parseInt(cb.value));
-    const { error } = await supabaseClient.from('posts').delete().in('id', idsToDelete);
-
-    if (error) {
-        alert("Ошибка при удалении: " + error.message);
-    } else {
-        loadPosts(); 
-    }
-}
-
-// Режим админа через консоль: admin()
-window.admin = function() {
-    const pass = prompt("Пароль модератора:");
-    if (pass === ADMIN_PASS) {
-        isAdminMode = true; 
-        loadPosts(); 
-        alert("Режим модератора успешно активирован!");
-    } else {
-        alert("Неверный пароль!");
-    }
-};
-
-document.addEventListener('DOMContentLoaded', () => {
-    const sendBtn = document.getElementById('sendBtn');
-    if (sendBtn) {
-        sendBtn.onclick = addPost;
-    }
-    
-    const postInput = document.getElementById('postInput');
-    if (postInput) {
-        postInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') addPost();
-        });
-    }
-
-    updateProfileUI();
-    loadPosts();
-});
+    <script src="script.js"></script>
+</body>
+</html>
