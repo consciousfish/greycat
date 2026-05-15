@@ -1,4 +1,4 @@
-const SUPABASE_URL = 'https://uyjykjualjybzfckmgdm.supabase.co';
+const SUPABASE_URL = 'https://uyjykjaljybzfckmgdm.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_QADVddyaye_VV4M3JIEQDQ_iE0YF0lH';
 
 // Изменили имя переменной, чтобы не было конфликта в консоли
