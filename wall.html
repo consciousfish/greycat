@@ -45,28 +45,28 @@
             font-weight: bold;
         }
         .main-content {
-            max-width: 800px;
+            max-width: 850px;
             margin: 40px auto;
             padding: 0 20px;
             text-align: center;
         }
         h1 {
-            font-size: 28px;
+            font-size: 32px;
             margin-bottom: 30px;
         }
         .input-container {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             margin-bottom: 30px;
         }
         input {
             flex: 1;
-            padding: 12px;
+            padding: 15px;
             background-color: #2f3136;
             border: 1px solid #202225;
-            border-radius: 5px;
+            border-radius: 6px;
             color: white;
-            font-size: 16px;
+            font-size: 18px;
             outline: none;
         }
         input:focus {
@@ -76,27 +76,49 @@
             background-color: #248046;
             color: white;
             border: none;
-            padding: 0 24px;
+            padding: 0 30px;
             border-radius: 5px;
-            font-size: 16px;
+            font-size: 18px;
             cursor: pointer;
             font-weight: bold;
         }
         .send-btn:hover {
             background-color: #1a6535;
         }
+        .send-btn:disabled {
+            background-color: #4f545c;
+            cursor: not-allowed;
+        }
         #postsContainer {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
             text-align: left;
             margin-top: 20px;
         }
         .post {
             background-color: #2f3136;
-            padding: 15px;
+            padding: 20px;
             border-radius: 8px;
-            border-left: 5px solid #5865f2;
+            border-left: 6px solid #5865f2;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .reaction-btn {
+            background: #18191c;
+            border: 1px solid #202225;
+            color: #b9bbbe;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: bold;
+        }
+        .reaction-btn:hover {
+            color: #fff;
+            border-color: #5865f2;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -116,18 +138,18 @@
     <div class="main-content">
         <h1>Стена приколов</h1>
 
-        <div id="userProfile" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; background: #18191c; padding: 12px 20px; border-radius: 8px; border: 1px solid #2f3136;">
+        <div id="userProfile" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; background: #18191c; padding: 15px 20px; border-radius: 8px; border: 1px solid #2f3136;">
             <div style="display: flex; align-items: center; gap: 15px;">
-                <img id="userAvatar" src="" alt="Avatar" style="width: 50px; height: 50px; border-radius: 50%; display: none; border: 2px solid #5865f2; object-fit: cover;">
+                <img id="userAvatar" src="" alt="Avatar" style="width: 55px; height: 55px; border-radius: 50%; display: none; border: 2px solid #5865f2; object-fit: cover;">
                 <div style="display: flex; flex-direction: column; gap: 4px; text-align: left;">
-                    <span id="userStatus" style="color: #b9bbbe; font-weight: bold;">Вы вошли как гость</span>
-                    <label style="color: #5865f2; font-size: 13px; cursor: pointer; text-decoration: underline;">
+                    <span id="userStatus" style="color: #b9bbbe; font-weight: bold; font-size: 16px;">Вы вошли как гость</span>
+                    <label style="color: #5865f2; font-size: 14px; cursor: pointer; text-decoration: underline;">
                         Загрузить свою аватарку
                         <input type="file" id="avatarLoader" accept="image/*" onchange="uploadCustomAvatar(event)" style="display: none;">
                     </label>
                 </div>
             </div>
-            <button id="authBtn" onclick="loginUser()" style="background: #5865f2; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: bold;">Войти / Сменить ник</button>
+            <button id="authBtn" onclick="loginUser()" style="background: #5865f2; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 15px;">Войти / Сменить ник</button>
         </div>
 
         <div class="input-container">
