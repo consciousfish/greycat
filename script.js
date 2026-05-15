@@ -1,7 +1,6 @@
 const SUPABASE_URL = 'https://uyjykjualjybzfckmgdm.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_QADVddyaye_VV4M3JIEQDQ_iE0YF0lH';
 
-// Изменили имя переменной, чтобы не было конфликта в консоли
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const ADMIN_PASS = "781";
@@ -43,7 +42,7 @@ async function addPost() {
 
     const { error } = await supabaseClient.from('posts').insert([{ text: text }]);
     if (error) {
-        alert('Ошибка базы данных. Проверь настройки таблицы!');
+        alert('Ошибка базы данных: ' + error.message);
         console.error(error);
     } else {
         input.value = '';
