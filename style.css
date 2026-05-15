@@ -43,12 +43,12 @@ body {
 .giant-title { font-size: 5rem; margin: 0; color: white; letter-spacing: -2px; }
 .subtitle { font-size: 1.5rem; color: #949ba4; margin-top: 10px; }
 
-/* Стена */
+/* Стилизация Стены */
 .wall-input { display: flex; gap: 10px; margin-bottom: 30px; }
 input { background: #1e1f22; border: 1px solid #1e1f22; color: white; padding: 12px; flex-grow: 1; border-radius: 4px; outline: none; }
 input:focus { border-color: #5865f2; }
-button { background: #248046; color: white; border: none; padding: 10px 24px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-button:hover { background: #1a6334; }
+button#sendBtn { background: #248046; color: white; border: none; padding: 10px 24px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+button#sendBtn:hover { background: #1a6334; }
 
 .post { 
     background: #2b2d31; 
@@ -61,5 +61,4 @@ button:hover { background: #1a6334; }
     align-items: center;
 }
 
-.del-btn { background: none; color: #da373c; padding: 5px; font-size: 0.8rem; opacity: 0.7; }
-.del-btn:hover { opacity: 1; text-decoration: underline; }
+.del-btn:hover { text-decoration: underline; }
