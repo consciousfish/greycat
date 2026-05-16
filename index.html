@@ -87,10 +87,16 @@
         </label>
         <button onclick="resetEmojiImage()" style="margin-left:8px;background:#2a1010;color:#e03c3c;border:1px solid rgba(224,60,60,0.35);border-radius:6px;padding:6px 8px;cursor:pointer;">Сброс</button>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        const SUPABASE_URL = 'https://uyjyjkualjybzfckmgdm.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_QADVddyaye_VV4M3JIEQDQ_iE0YF0lH';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         const ADMIN_PASS = "cat781grey";
+        const PARTICLE_CONFIG_PREFIX = '[greycat-home-particles]';
         const DEFAULT_PARTICLES = ['✨', '🔥', '💥', '⭐', '🧡', '🎮'];
-        let customParticleImage = localStorage.getItem('home_particle_image') || '';
+        let customParticleImage = '';
+        let particleConfigPostId = null;
 
         function hasEmojiAdminAccess() {
             return localStorage.getItem('forum_admin_unlocked') === 'true';
@@ -116,20 +122,63 @@
             }
         }
 
+        async function loadGlobalParticleImage() {
+            const { data, error } = await supabaseClient
+                .from('posts')
+                .select('id,text')
+                .order('id', { ascending: false })
+                .limit(100);
+            if (error) return;
+            const configPost = (data || []).find(post => post.text && post.text.startsWith(PARTICLE_CONFIG_PREFIX));
+            if (!configPost) return;
+            particleConfigPostId = configPost.id;
+            try {
+                const config = JSON.parse(configPost.text.slice(PARTICLE_CONFIG_PREFIX.length));
+                customParticleImage = config.image || '';
+            } catch (e) {
+                customParticleImage = '';
+            }
+        }
+
+        async function saveGlobalParticleImage(image) {
+            const text = PARTICLE_CONFIG_PREFIX + JSON.stringify({ image, updatedAt: Date.now() });
+            if (particleConfigPostId) {
+                const { error } = await supabaseClient.from('posts').update({ text }).eq('id', particleConfigPostId);
+                if (error) throw error;
+                return;
+            }
+            const { data, error } = await supabaseClient
+                .from('posts')
+                .insert([{ text, username: 'home-particles', avatar: '', parent_id: null, image: null }])
+                .select('id')
+                .single();
+            if (error) throw error;
+            particleConfigPostId = data.id;
+        }
+
         window.setEmojiImage = function(event) {
             const file = event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = async function(e) {
                 customParticleImage = e.target.result;
-                localStorage.setItem('home_particle_image', customParticleImage);
+                try {
+                    await saveGlobalParticleImage(customParticleImage);
+                    alert('Глобальная картинка эмодзи сохранена.');
+                } catch (error) {
+                    alert('Не получилось сохранить картинку глобально: ' + error.message);
+                }
             };
             reader.readAsDataURL(file);
         };
 
-        window.resetEmojiImage = function() {
+        window.resetEmojiImage = async function() {
             customParticleImage = '';
-            localStorage.removeItem('home_particle_image');
+            try {
+                await saveGlobalParticleImage('');
+            } catch (error) {
+                alert('Не получилось сбросить картинку глобально: ' + error.message);
+            }
         };
 
         document.addEventListener('click', (event) => {
@@ -151,6 +200,7 @@
             }
         });
 
+        loadGlobalParticleImage();
         updateEmojiAdmin();
     </script>
 </body>

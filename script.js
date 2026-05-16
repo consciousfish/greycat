@@ -7,7 +7,7 @@ const ADMIN_PASS = "cat781grey";
 const DEFAULT_BOARD_ID = 'main';
 const BOARD_META_PREFIX = '[greycat-board]';
 const BOARD_POST_PREFIX = '[greycat-board-post:';
-const HIDDEN_SERVICE_PREFIXES = ['[greycat-spy-room]', '[greycat-chat]'];
+const HIDDEN_SERVICE_PREFIXES = ['[greycat-spy-room]', '[greycat-chat]', '[greycat-home-particles]'];
 let isAdminMode = localStorage.getItem('forum_admin_mode') === 'true'; 
 let isSending = false; 
 let currentParentId = null; 
