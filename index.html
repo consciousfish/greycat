@@ -61,6 +61,98 @@
             cursor: pointer;
             user-select: none;
         }
+        .lore-section {
+            max-width: 980px;
+            margin: 0 auto 70px;
+            padding: 0 20px;
+        }
+        .lore-head {
+            margin-bottom: 18px;
+            text-align: left;
+        }
+        .lore-head h2 {
+            margin: 0 0 8px;
+            color: #fff;
+            font-size: 1.65rem;
+            font-weight: 900;
+            letter-spacing: 0;
+        }
+        .lore-head p {
+            margin: 0;
+            color: #999;
+            font-size: 0.95rem;
+            line-height: 1.55;
+        }
+        .lore-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+        .lore-card {
+            background: #1f1f1f;
+            border: 1px solid #2a2a2a;
+            border-left: 3px solid #ff5500;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: left;
+        }
+        .lore-card.wide {
+            grid-column: 1 / -1;
+        }
+        .lore-card h3 {
+            margin: 0 0 10px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 900;
+            letter-spacing: 0;
+        }
+        .lore-card p {
+            margin: 0;
+            color: #cfcfcf;
+            font-size: 0.92rem;
+            line-height: 1.58;
+        }
+        .lore-list {
+            display: grid;
+            gap: 9px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .lore-list li {
+            color: #cfcfcf;
+            font-size: 0.9rem;
+            line-height: 1.48;
+        }
+        .lore-list strong {
+            color: #fff;
+        }
+        .lore-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .lore-tag {
+            background: #181818;
+            border: 1px solid #2a2a2a;
+            color: #ccc;
+            border-radius: 999px;
+            padding: 7px 10px;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+        .lore-tag.accent {
+            color: #fff;
+            border-color: #ff5500;
+            background: #2a1a10;
+        }
+        .lore-quote {
+            margin-top: 12px;
+            color: #ff5500;
+            font-weight: 800;
+            font-size: 0.95rem;
+            line-height: 1.45;
+        }
         @media (max-width: 640px) {
             .particle {
                 width: 54px;
@@ -73,6 +165,19 @@
                 right: 10px;
                 bottom: 10px;
                 max-width: calc(100vw - 20px);
+            }
+            .lore-section {
+                padding: 0 10px;
+                margin-bottom: 44px;
+            }
+            .lore-grid {
+                grid-template-columns: 1fr;
+            }
+            .lore-head h2 {
+                font-size: 1.35rem;
+            }
+            .lore-card {
+                padding: 14px;
             }
         }
     </style>
@@ -92,6 +197,81 @@
         <section class="centered-section">
             <h1 class="giant-title">greycat781</h1>
             <p class="subtitle">халупа червяка</p>
+        </section>
+
+        <section class="lore-section">
+            <div class="lore-head">
+                <h2>Лор greycat781</h2>
+                <p>Архив канала <strong>общее</strong>: 1653 сообщения с 28.03.2025 по 16.05.2026. Это история сервера, который начался как случайно названная войс-хата, а стал маленькой мифологией из грибов, птиц, картинок, Gartic Phone, Spyfall и странных фраз.</p>
+            </div>
+
+            <div class="lore-grid">
+                <article class="lore-card wide">
+                    <h3>Главный канон</h3>
+                    <p><strong>greycat781</strong> родился 28 марта 2025 почти случайно. Первый вопрос: “че за грейкет”, потом обсуждение, что название угарное, “типо как бум бокс”. Scarlet признал, что поставил первое, что пришло в голову. Так сервер сразу получил главный стиль: не бренд, а случайная фраза, которая стала местом. Сервер живёт циклами: сначала сбор людей в войс, потом поток картинок, затем грибная секта, птицы и Gartic Phone, Spyfall, поздний GIF-хаос, музыка, ссылки, сайт и форум.</p>
+                    <div class="lore-quote">Коротко: greycat781 — это халупа червяка, где грибы стали религией, птицы стали языком, а любое случайное слово может стать историческим событием.</div>
+                </article>
+
+                <article class="lore-card">
+                    <h3>Главные участники</h3>
+                    <ul class="lore-list">
+                        <li><strong>Scarlet</strong> — центральная ось сервера, главный двигатель активностей, Gartic, GIF, ссылок, сайта и общего визуального хаоса.</li>
+                        <li><strong>фригидный2009</strong> — сооснователь атмосферы: первым реагирует на greycat, зовёт в войс, пингует, ловит лаги и запускает бытовую панику.</li>
+                        <li><strong>KroJluK-k0n@et О.О</strong> — шаман коротких сообщений: “🧠”, “мозг”, “ПТИЦЕКОРОБКА”, “УТОПЛЕННИК”, символы и слова-таблички из сна.</li>
+                        <li><strong>ВИКТОР</strong> — драматический диктор поздней эпохи: “МУТАНТ VS НАВАЛЬНЫЙ”, “ПРОСТО БОСС”, “НАЧАЛЬНИК”, “ЧЕЛОВЕК ЛОСЬ”.</li>
+                    </ul>
+                </article>
+
+                <article class="lore-card">
+                    <h3>Второй круг</h3>
+                    <ul class="lore-list">
+                        <li><strong>woeloshell</strong> — ранний навигатор и архивариус терминов: “Синтаксис”, “ДЖУГАТЬ КЭШ”, “Лопатсьон”, “Одесский кебаб”.</li>
+                        <li><strong>уr3t-r1t</strong> — полевой исследователь грибов и крика: “груздь горький”, “свинушка толстая”, “гриб ID”, производственный вайб.</li>
+                        <li><strong>neurocyclops</strong> — визуальный археолог апреля: “мобайл”, “dodo пес”, пчёлы, серии картинок и странные находки.</li>
+                        <li><strong>aura…)W</strong> — творческий гость: tiermaker, YouTube, “АЛЕ СЛОН”, задания нарисовать жену в стиле Симпсонов.</li>
+                    </ul>
+                </article>
+
+                <article class="lore-card">
+                    <h3>Эпохи</h3>
+                    <ul class="lore-list">
+                        <li><strong>28.03.2025 — Рождение Greycat:</strong> название принимается через смех и становится точкой сборки.</li>
+                        <li><strong>Весна 2025 — Войс и сборы:</strong> “войс”, “зайди”, “кого звать”, “лагает”, “я тебя не слышу”.</li>
+                        <li><strong>10–18.04.2025 — Визуальный потоп:</strong> картинки, “мобайл”, “dodo пес”, “кепочка мита”, пчёлы.</li>
+                        <li><strong>13.05.2025 — Мем-реактор:</strong> ночь реакций, вложений, 👍, 🤣 и “История клецок и их собратьев”.</li>
+                    </ul>
+                </article>
+
+                <article class="lore-card">
+                    <h3>Поздний канон</h3>
+                    <ul class="lore-list">
+                        <li><strong>16.05 и 06.12.2025 — Грибная секта:</strong> fungi, mushroom, “груздь горький”, “свинушка толстая”, приложение “гриб ID”.</li>
+                        <li><strong>Лето и декабрь 2025 — Птичий язык:</strong> woodcock, kiwi, duck, bird walk, toucan. Кинул птицу — сказал всё.</li>
+                        <li><strong>Декабрь 2025 — Gartic / Spyfall:</strong> коллективные игровые ритуалы, из которых выросла вкладка “Шпион”.</li>
+                        <li><strong>2026 — Эзотерика:</strong> “ТЕОДОР ГОФМАН ЭРНСТ АМАДЕЙ”, “Приорат Сиона”, “ζ”, “ЧЕЛОВЕК ЛОСЬ”.</li>
+                    </ul>
+                </article>
+
+                <article class="lore-card wide">
+                    <h3>Мемы и артефакты</h3>
+                    <div class="lore-tags">
+                        <span class="lore-tag accent">greycat / грейкет</span>
+                        <span class="lore-tag">сырое яйцо 🥚</span>
+                        <span class="lore-tag">сын наркомана</span>
+                        <span class="lore-tag">мобайл</span>
+                        <span class="lore-tag accent">гриб ID</span>
+                        <span class="lore-tag">woodcock / kiwi</span>
+                        <span class="lore-tag">Gartic Phone</span>
+                        <span class="lore-tag">Spyfall</span>
+                        <span class="lore-tag">МУТАНТ VS НАВАЛЬНЫЙ</span>
+                        <span class="lore-tag">ЧЕЛОВЕК ЛОСЬ</span>
+                        <span class="lore-tag">ПТИЦЕКОРОБКА</span>
+                        <span class="lore-tag">УТОПЛЕННИК</span>
+                        <span class="lore-tag">Приорат Сиона</span>
+                        <span class="lore-tag">ζ / дзета-функция</span>
+                    </div>
+                </article>
+            </div>
         </section>
     </main>
     <div id="emojiAdmin" class="emoji-admin">
