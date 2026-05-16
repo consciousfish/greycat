@@ -526,7 +526,7 @@ async function loadPosts() {
     }
 
     container.innerHTML = '';
-    const allPosts = data || [];
+    const allPosts = (data || []).filter(post => !isHiddenServicePost(post));
     const boards = collectBoards(allPosts);
     renderBoardHeader(boards);
     
@@ -543,14 +543,12 @@ async function loadPosts() {
     const visibleIds = new Set();
 
     allPosts.forEach(post => {
-        if (isHiddenServicePost(post)) return;
         if (parseBoardMeta(post)) return;
         if (getPostBoardId(post) !== currentBoardId) return;
         visibleIds.add(post.id);
     });
 
     allPosts.forEach(post => {
-        if (isHiddenServicePost(post)) return;
         if (parseBoardMeta(post) || !visibleIds.has(post.id)) return;
         if (!post.parent_id) {
             roots.push(post);
