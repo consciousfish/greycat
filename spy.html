@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>greycat781 — Шпион</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 40px;
+            background-color: #181818;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        header .logo {
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: #ff5500;
+            text-transform: lowercase;
+            letter-spacing: -0.5px;
+        }
+        header nav {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        header nav a {
+            color: #999999;
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            padding: 7px 16px;
+            border-radius: 20px;
+            border: 1px solid transparent;
+            transition: color 0.15s, border-color 0.15s;
+        }
+        header nav a:hover { color: #fff; border-color: #3a3a3a; }
+        header nav a.active { color: #fff; }
+        .discord-btn {
+            background-color: #ff5500 !important;
+            color: white !important;
+            border-radius: 20px !important;
+            font-weight: 600 !important;
+            border: none !important;
+        }
+        .discord-btn:hover { background-color: #ff7733 !important; }
+        .main-content {
+            max-width: 980px;
+            margin: 120px auto 40px;
+            padding: 0 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 24px;
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
+        .spy-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+            gap: 16px;
+            align-items: start;
+        }
+        .panel {
+            background: #1f1f1f;
+            border: 1px solid #2a2a2a;
+            border-left: 3px solid #ff5500;
+            border-radius: 8px;
+            padding: 16px;
+        }
+        .panel h2 {
+            margin: 0 0 12px;
+            font-size: 1.05rem;
+            color: #fff;
+        }
+        .muted {
+            color: #999;
+            font-size: 13px;
+            line-height: 1.45;
+        }
+        .row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        input, textarea {
+            background: #2a2a2a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+            padding: 12px 14px;
+        }
+        textarea {
+            width: 100%;
+            min-height: 92px;
+            resize: vertical;
+        }
+        input:focus, textarea:focus { border-color: #ff5500; }
+        .grow { flex: 1; min-width: 180px; }
+        button {
+            background: #ff5500;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 16px;
+            cursor: pointer;
+            font-weight: 800;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.15s, border-color 0.15s, color 0.15s;
+        }
+        button:hover { background: #ff7733; }
+        button.secondary {
+            background: #181818;
+            color: #ccc;
+            border: 1px solid #333;
+        }
+        button.secondary:hover {
+            color: #fff;
+            border-color: #ff5500;
+            background: #222427;
+        }
+        button.danger {
+            background: #2a1010;
+            color: #e03c3c;
+            border: 1px solid rgba(224,60,60,0.35);
+        }
+        button.danger:hover {
+            background: #3a1414;
+            color: #fff;
+            border-color: #e03c3c;
+        }
+        .room-code {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 96px;
+            padding: 10px 14px;
+            border: 1px solid #ff5500;
+            border-radius: 8px;
+            background: #2a1a10;
+            color: #fff;
+            font-size: 1.4rem;
+            font-weight: 900;
+            letter-spacing: 0.18em;
+        }
+        .players-list, .word-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .pill {
+            background: #181818;
+            border: 1px solid #2a2a2a;
+            border-radius: 999px;
+            color: #ccc;
+            padding: 7px 11px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .pill.host {
+            color: #fff;
+            border-color: #ff5500;
+            background: #2a1a10;
+        }
+        .pack-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .pack-card {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            background: #181818;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            padding: 11px 12px;
+        }
+        .pack-card input {
+            width: auto;
+            margin-top: 2px;
+        }
+        .pack-name {
+            color: #fff;
+            font-weight: 800;
+            font-size: 14px;
+        }
+        .pack-count {
+            color: #777;
+            font-size: 12px;
+            margin-top: 3px;
+        }
+        .role-card {
+            display: none;
+            margin-top: 12px;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+        .role-title {
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+        .role-word {
+            color: #ff5500;
+            font-size: 1.6rem;
+            font-weight: 900;
+        }
+        .timer {
+            color: #fff;
+            font-size: 2.4rem;
+            font-weight: 900;
+            letter-spacing: 0.04em;
+            margin: 6px 0 12px;
+        }
+        .hidden { display: none !important; }
+        @media (max-width: 780px) {
+            .spy-grid { grid-template-columns: 1fr; }
+            .main-content { margin-top: 132px; }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">greycat781</div>
+        <nav>
+            <a href="index.html">Главная</a>
+            <a href="wall.html">Форум</a>
+            <a href="spy.html" class="active">Шпион</a>
+            <a href="https://discord.gg/9FV6q4qbjm" target="_blank" class="discord-btn">Discord</a>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <h1>Шпион</h1>
+
+        <div class="spy-grid">
+            <section class="panel">
+                <h2>Комната</h2>
+                <div id="roomGate">
+                    <p class="muted">Создай комнату или введи код, чтобы зайти в лобби.</p>
+                    <div class="row">
+                        <button onclick="createRoom()">Создать комнату</button>
+                        <input class="grow" id="joinCodeInput" maxlength="4" inputmode="numeric" placeholder="Код комнаты">
+                        <button class="secondary" onclick="joinRoom()">Присоединиться</button>
+                    </div>
+                </div>
+
+                <div id="roomPanel" class="hidden">
+                    <div class="row" style="justify-content:space-between;align-items:flex-start;">
+                        <div>
+                            <div class="muted">Код комнаты</div>
+                            <div id="roomCode" class="room-code">0000</div>
+                        </div>
+                        <button class="secondary" onclick="leaveRoom()">Выйти</button>
+                    </div>
+
+                    <div style="margin-top:18px;">
+                        <h2>Игроки</h2>
+                        <div id="playersList" class="players-list"></div>
+                    </div>
+
+                    <div id="lobbyControls" style="margin-top:18px;">
+                        <h2>Паки для замеса</h2>
+                        <p class="muted">Хост выбирает галочками, какие паки попадут в игру. Кастомный пак можно добавить прямо здесь.</p>
+                        <div id="packList" class="pack-list"></div>
+                        <div class="panel" style="margin-top:12px;border-left-color:#333;">
+                            <h2>Свой пак</h2>
+                            <div class="row" style="margin-bottom:10px;">
+                                <input class="grow" id="customPackName" placeholder="Название пака">
+                            </div>
+                            <textarea id="customPackWords" placeholder="Слова или фразы через запятую"></textarea>
+                            <div class="row" style="margin-top:10px;">
+                                <button class="secondary" onclick="addCustomPack()">Сохранить пак</button>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top:12px;">
+                            <button id="startBtn" onclick="startGame()">Старт</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <aside class="panel">
+                <h2>Матч</h2>
+                <div id="idleMatch" class="muted">После старта здесь появятся таймер, роль и список слов.</div>
+                <div id="matchPanel" class="hidden">
+                    <div class="muted">Осталось времени</div>
+                    <div id="timer" class="timer">05:00</div>
+                    <button id="roleBtn" class="secondary" onmousedown="showRole()" onmouseup="hideRole()" onmouseleave="hideRole()" ontouchstart="showRole()" ontouchend="hideRole()" onclick="toggleRole()">Показать мою роль</button>
+                    <div id="roleCard" class="role-card">
+                        <div id="roleTitle" class="role-title"></div>
+                        <div id="roleWord" class="role-word"></div>
+                    </div>
+                    <div style="margin-top:18px;">
+                        <h2>Слова в игре</h2>
+                        <div id="possibleWords" class="word-list"></div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <script src="spy.js?v=spy-20260516"></script>
+</body>
+</html>

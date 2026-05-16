@@ -7,6 +7,7 @@ const ADMIN_PASS = "cat781grey";
 const DEFAULT_BOARD_ID = 'main';
 const BOARD_META_PREFIX = '[greycat-board]';
 const BOARD_POST_PREFIX = '[greycat-board-post:';
+const HIDDEN_SERVICE_PREFIXES = ['[greycat-spy-room]', '[greycat-chat]'];
 let isAdminMode = localStorage.getItem('forum_admin_mode') === 'true'; 
 let isSending = false; 
 let currentParentId = null; 
@@ -73,6 +74,10 @@ function parseBoardMeta(post) {
     } catch (e) {
         return null;
     }
+}
+
+function isHiddenServicePost(post) {
+    return HIDDEN_SERVICE_PREFIXES.some(prefix => post.text && post.text.startsWith(prefix));
 }
 
 function getPostBoardId(post) {
@@ -538,12 +543,14 @@ async function loadPosts() {
     const visibleIds = new Set();
 
     allPosts.forEach(post => {
+        if (isHiddenServicePost(post)) return;
         if (parseBoardMeta(post)) return;
         if (getPostBoardId(post) !== currentBoardId) return;
         visibleIds.add(post.id);
     });
 
     allPosts.forEach(post => {
+        if (isHiddenServicePost(post)) return;
         if (parseBoardMeta(post) || !visibleIds.has(post.id)) return;
         if (!post.parent_id) {
             roots.push(post);
