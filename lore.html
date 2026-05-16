@@ -7,29 +7,33 @@
     <link rel="stylesheet" href="style.css">
     <style>
         .lore-page {
-            max-width: 1080px;
-            margin: 132px auto 60px;
+            max-width: 1180px;
+            margin: 132px auto 64px;
             padding: 0 20px;
         }
-        .lore-hero {
-            display: grid;
-            grid-template-columns: minmax(0, 1.25fr) minmax(260px, 0.75fr);
-            gap: 16px;
-            align-items: stretch;
-            margin-bottom: 18px;
-        }
-        .lore-title-card,
-        .lore-stat-card,
+        .lore-hero,
         .lore-card,
-        .timeline-card {
+        .lore-note,
+        .lore-gallery,
+        .lore-timeline {
             background: #1f1f1f;
             border: 1px solid #2a2a2a;
             border-radius: 8px;
             text-align: left;
         }
-        .lore-title-card {
-            padding: 28px;
+        .lore-hero {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) minmax(250px, 0.75fr);
+            gap: 16px;
+            padding: 18px;
+            margin-bottom: 16px;
             border-left: 3px solid #ff5500;
+            background:
+                linear-gradient(135deg, rgba(255,85,0,0.12), transparent 38%),
+                #1f1f1f;
+        }
+        .lore-hero-main {
+            padding: 10px;
         }
         .lore-kicker {
             color: #ff5500;
@@ -38,37 +42,31 @@
             letter-spacing: 0.08em;
             text-transform: uppercase;
         }
-        .lore-title-card h1 {
-            margin: 10px 0 12px;
+        .lore-hero h1 {
+            margin: 10px 0 14px;
             color: #fff;
-            font-size: clamp(2.2rem, 7vw, 5.2rem);
+            font-size: clamp(2.5rem, 8vw, 5.6rem);
             line-height: 0.95;
-            letter-spacing: 0;
             font-weight: 900;
+            letter-spacing: 0;
         }
-        .lore-title-card p {
-            max-width: 740px;
+        .lore-hero p {
+            max-width: 760px;
             margin: 0;
-            color: #b8b8b8;
+            color: #cfcfcf;
             font-size: 1rem;
             line-height: 1.65;
         }
-        .lore-stat-card {
+        .lore-stats {
             display: grid;
+            gap: 10px;
             align-content: center;
-            gap: 12px;
-            padding: 22px;
-            background:
-                linear-gradient(135deg, rgba(255,85,0,0.14), transparent 42%),
-                #181818;
         }
         .lore-stat {
-            padding-bottom: 12px;
-            border-bottom: 1px solid #2a2a2a;
-        }
-        .lore-stat:last-child {
-            padding-bottom: 0;
-            border-bottom: 0;
+            background: #181818;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            padding: 14px;
         }
         .lore-stat strong {
             display: block;
@@ -79,6 +77,7 @@
         .lore-stat span {
             color: #999;
             font-size: 0.86rem;
+            line-height: 1.35;
         }
         .lore-grid {
             display: grid;
@@ -86,27 +85,55 @@
             gap: 16px;
         }
         .lore-card,
-        .timeline-card {
+        .lore-note,
+        .lore-gallery,
+        .lore-timeline {
             padding: 18px;
         }
-        .lore-card.wide,
-        .timeline-card {
+        .wide {
             grid-column: 1 / -1;
         }
         .lore-card h2,
-        .timeline-card h2 {
+        .lore-note h2,
+        .lore-gallery h2,
+        .lore-timeline h2 {
             margin: 0 0 12px;
             color: #fff;
-            font-size: 1.15rem;
+            font-size: 1.18rem;
             font-weight: 900;
             letter-spacing: 0;
         }
         .lore-card p,
-        .timeline-card p {
-            margin: 0;
+        .lore-note p,
+        .lore-gallery p,
+        .lore-timeline p {
+            margin: 0 0 12px;
             color: #cfcfcf;
             font-size: 0.95rem;
             line-height: 1.65;
+        }
+        .lore-card p:last-child,
+        .lore-note p:last-child,
+        .lore-gallery p:last-child {
+            margin-bottom: 0;
+        }
+        .lore-list,
+        .lore-timeline-list {
+            display: grid;
+            gap: 10px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .lore-list li,
+        .lore-timeline-list li {
+            color: #cfcfcf;
+            font-size: 0.93rem;
+            line-height: 1.55;
+        }
+        .lore-list strong,
+        .lore-timeline-list strong {
+            color: #fff;
         }
         .lore-quote {
             margin-top: 14px;
@@ -119,42 +146,17 @@
             font-weight: 800;
             line-height: 1.45;
         }
-        .cast-list,
-        .lore-list,
-        .timeline-list {
-            display: grid;
-            gap: 10px;
-            margin: 0;
-            padding: 0;
-            list-style: none;
-        }
-        .cast-list li,
-        .lore-list li {
-            color: #cfcfcf;
-            font-size: 0.93rem;
-            line-height: 1.52;
-        }
-        .cast-list strong,
-        .lore-list strong,
-        .timeline-list strong {
-            color: #fff;
-        }
-        .timeline-list {
+        .lore-timeline-list {
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
         }
-        .timeline-list li {
+        .lore-timeline-list li {
             position: relative;
-            min-height: 100%;
             padding: 14px 14px 14px 18px;
             background: #181818;
             border: 1px solid #2a2a2a;
             border-radius: 8px;
-            color: #cfcfcf;
-            font-size: 0.92rem;
-            line-height: 1.5;
         }
-        .timeline-list li::before {
+        .lore-timeline-list li::before {
             content: '';
             position: absolute;
             left: -1px;
@@ -164,12 +166,45 @@
             border-radius: 3px;
             background: #ff5500;
         }
-        .lore-tags {
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 10px;
+            margin-top: 14px;
+        }
+        .image-grid.large {
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        }
+        .lore-shot {
+            margin: 0;
+            background: #181818;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .lore-shot img {
+            display: block;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            background: #111;
+        }
+        .image-grid.large .lore-shot img {
+            aspect-ratio: 4 / 3;
+        }
+        .lore-shot figcaption {
+            padding: 9px 10px 10px;
+            color: #aaa;
+            font-size: 0.78rem;
+            line-height: 1.35;
+        }
+        .tag-cloud {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
+            margin-top: 12px;
         }
-        .lore-tag {
+        .tag {
             background: #181818;
             border: 1px solid #2a2a2a;
             color: #ccc;
@@ -178,7 +213,7 @@
             font-size: 0.82rem;
             font-weight: 800;
         }
-        .lore-tag.accent {
+        .tag.accent {
             color: #fff;
             border-color: #ff5500;
             background: #2a1a10;
@@ -186,23 +221,33 @@
         @media (max-width: 760px) {
             .lore-page {
                 margin-top: 126px;
-                padding: 0 12px 32px;
+                padding: 0 12px 34px;
             }
             .lore-hero,
             .lore-grid,
-            .timeline-list {
+            .lore-timeline-list {
                 grid-template-columns: 1fr;
             }
-            .lore-title-card {
-                padding: 22px;
-            }
-            .lore-title-card h1 {
-                font-size: 2.8rem;
-            }
+            .lore-hero,
             .lore-card,
-            .timeline-card,
-            .lore-stat-card {
+            .lore-note,
+            .lore-gallery,
+            .lore-timeline {
                 padding: 16px;
+            }
+            .lore-hero-main {
+                padding: 0;
+            }
+            .lore-hero h1 {
+                font-size: 3rem;
+            }
+            .image-grid,
+            .image-grid.large {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 8px;
+            }
+            .lore-shot figcaption {
+                font-size: 0.72rem;
             }
         }
     </style>
@@ -221,96 +266,173 @@
 
     <main class="lore-page">
         <section class="lore-hero">
-            <article class="lore-title-card">
-                <div class="lore-kicker">архив канала общее</div>
-                <h1>Лор greycat781</h1>
-                <p>Полная история сервера из 1653 сообщений: как случайно названная войс-хата превратилась в маленькую мифологию из грибов, птиц, картинок, Gartic Phone, Spyfall, странных фраз и локальных мемов.</p>
-            </article>
-
-            <aside class="lore-stat-card" aria-label="Краткая сводка">
+            <div class="lore-hero-main">
+                <div class="lore-kicker">архив greycat781</div>
+                <h1>Лор сервера</h1>
+                <p>Это не официальный учебник и не “история успеха”. Это нормальная летопись того, как из случайного названия, войса, картинок, игр и странных фраз вырос свой маленький мир. Тут собраны четыре канала: <strong>общее</strong>, <strong>мутанты</strong>, <strong>мутанты-билды</strong> и <strong>мутные-болота</strong>.</p>
+            </div>
+            <aside class="lore-stats">
                 <div class="lore-stat">
                     <strong>28.03.2025</strong>
-                    <span>рождение greycat781</span>
+                    <span>первый день: “че за грейкет”</span>
                 </div>
                 <div class="lore-stat">
-                    <strong>1653</strong>
-                    <span>сообщения в архиве</span>
+                    <strong>1700+</strong>
+                    <span>сообщений в просмотренных архивах</span>
                 </div>
                 <div class="lore-stat">
-                    <strong>2025–2026</strong>
-                    <span>эпохи войса, грибов, птиц и игр</span>
+                    <strong>600+</strong>
+                    <span>картинок, вложений и визуального мусора, который стал каноном</span>
                 </div>
             </aside>
         </section>
 
         <section class="lore-grid">
             <article class="lore-card wide">
-                <h2>Главный канон</h2>
-                <p><strong>greycat781</strong> родился 28 марта 2025 почти случайно. Первый вопрос был простой: “че за грейкет”. Потом пошло обсуждение, что название угарное, “типо как бум бокс”. Scarlet признал, что поставил первое, что пришло в голову. Так сервер сразу получил главный стиль: не бренд, не проект, не строгая структура, а случайная фраза, которая внезапно стала местом. С этого момента сервер живёт циклами: сбор людей в войс, поток картинок, грибная секта, птицы, Gartic Phone, Spyfall, поздний GIF-хаос, музыка, ссылки, сайт и форум.</p>
-                <div class="lore-quote">Коротко: greycat781 — это халупа червяка, где грибы стали религией, птицы стали языком, а любое случайное слово может стать историческим событием.</div>
+                <h2>С чего всё началось</h2>
+                <p>greycat781 появился без торжественной заставки. 28 марта 2025 фригидный2009 зашёл с вопросом “че за грейкет”, Scarlet ответил, что не так, а через минуту уже выяснилось главное: название угарное, звучит “типо как бум бокс”, и вообще было поставлено первое, что пришло в голову. Это и стало базовым законом сервера: если случайная штука достаточно смешная, она остаётся.</p>
+                <p>Дальше сервер быстро стал не местом с одной темой, а комнатой, где всё превращается в материал. Войс, лаги, “кого звать”, Factorio, картинки, мемы, птичьи подборки, грибные вспышки, Gartic Phone, Spyfall, мутанты, болотная фантастика. Лор здесь не придумывали отдельно. Он накапливался сам, пока люди кидали то, что у них было в голове.</p>
+                <div class="lore-quote">Главная формула greycat781: сначала никто не понимает, зачем это было отправлено, потом это уже часть истории.</div>
             </article>
 
             <article class="lore-card">
-                <h2>Главные участники</h2>
-                <ul class="cast-list">
-                    <li><strong>Scarlet</strong> — центральная ось сервера, главный двигатель активностей, Gartic, GIF, ссылок, сайта и общего визуального хаоса.</li>
-                    <li><strong>фригидный2009</strong> — сооснователь атмосферы: первым реагирует на greycat, зовёт в войс, пингует, ловит лаги и запускает бытовую панику.</li>
-                    <li><strong>KroJluK-k0n@et О.О</strong> — шаман коротких сообщений: “🧠”, “мозг”, “ПТИЦЕКОРОБКА”, “УТОПЛЕННИК”, символы и слова-таблички из сна.</li>
-                    <li><strong>ВИКТОР</strong> — драматический диктор поздней эпохи: “МУТАНТ VS НАВАЛЬНЫЙ”, “ПРОСТО БОСС”, “НАЧАЛЬНИК”, “ЧЕЛОВЕК ЛОСЬ”.</li>
+                <h2>Главные люди</h2>
+                <ul class="lore-list">
+                    <li><strong>Scarlet</strong> — тот, кто дал серверу имя и постоянно подбрасывает топливо: картинки, игры, GIF-хаос, сайт, форум, шпиона и визуальные эпохи.</li>
+                    <li><strong>фригидный2009</strong> — ранний соавтор атмосферы. Пингует, зовёт, комментирует, запускает бытовую суету, а потом внезапно пишет большой сюжет про астронавта GC-781.</li>
+                    <li><strong>KroJluK-k0n@et О.О</strong> — человек коротких заклинаний. “мозг”, “ПТИЦЕКОРОБКА”, “УТОПЛЕННИК” и прочие штуки, которые выглядят как таблички из сна.</li>
+                    <li><strong>ВИКТОР</strong> — поздний голос больших названий: “МУТАНТ VS НАВАЛЬНЫЙ”, “ПРОСТО БОСС”, “НАЧАЛЬНИК”, “ЧЕЛОВЕК ЛОСЬ”.</li>
                 </ul>
             </article>
 
             <article class="lore-card">
                 <h2>Второй круг</h2>
-                <ul class="cast-list">
-                    <li><strong>woeloshell</strong> — ранний навигатор и архивариус терминов: “Синтаксис”, “ДЖУГАТЬ КЭШ”, “Лопатсьон”, “Одесский кебаб”.</li>
-                    <li><strong>уr3t-r1t</strong> — полевой исследователь грибов и крика: “груздь горький”, “свинушка толстая”, “гриб ID”, производственный вайб.</li>
-                    <li><strong>neurocyclops</strong> — визуальный археолог апреля: “мобайл”, “dodo пес”, пчёлы, серии картинок и странные находки.</li>
-                    <li><strong>aura…)W</strong> — творческий гость: tiermaker, YouTube, “АЛЕ СЛОН”, задания нарисовать жену в стиле Симпсонов.</li>
-                </ul>
-            </article>
-
-            <article class="timeline-card">
-                <h2>Эпохи сервера</h2>
-                <ul class="timeline-list">
-                    <li><strong>28.03.2025 — Рождение Greycat:</strong> название принимается через смех и становится точкой сборки.</li>
-                    <li><strong>Весна 2025 — Войс и сборы:</strong> “войс”, “зайди”, “кого звать”, “лагает”, “я тебя не слышу”.</li>
-                    <li><strong>10–18.04.2025 — Визуальный потоп:</strong> картинки, “мобайл”, “dodo пес”, “кепочка мита”, пчёлы.</li>
-                    <li><strong>13.05.2025 — Мем-реактор:</strong> ночь реакций, вложений, 👍, 🤣 и “История клецок и их собратьев”.</li>
-                    <li><strong>16.05 и 06.12.2025 — Грибная секта:</strong> fungi, mushroom, “груздь горький”, “свинушка толстая”, приложение “гриб ID”.</li>
-                    <li><strong>Лето и декабрь 2025 — Птичий язык:</strong> woodcock, kiwi, duck, bird walk, toucan. Кинул птицу — сказал всё.</li>
-                    <li><strong>Декабрь 2025 — Gartic / Spyfall:</strong> коллективные игровые ритуалы, из которых выросла вкладка “Шпион”.</li>
-                    <li><strong>2026 — Эзотерика:</strong> “ТЕОДОР ГОФМАН ЭРНСТ АМАДЕЙ”, “Приорат Сиона”, “ζ”, “ЧЕЛОВЕК ЛОСЬ”.</li>
-                </ul>
-            </article>
-
-            <article class="lore-card">
-                <h2>Поздний канон</h2>
                 <ul class="lore-list">
-                    <li><strong>GIF-хаос:</strong> поздняя жизнь сервера становится визуальной: реакции, вложения, быстрые картинки и внезапные связки слов.</li>
-                    <li><strong>Музыка и ссылки:</strong> YouTube, странные находки, tiermaker и внешние штуки становятся топливом разговоров.</li>
-                    <li><strong>Сайт и форум:</strong> сервер получает свою площадку, где “стена” превращается в форум, борды, шпиона и теперь отдельную страницу лора.</li>
+                    <li><strong>woeloshell</strong> — ранний участник, который приносит имена, людей и странные формулировки вроде “ДЖУГАТЬ КЭШ”, “Лопатсьон”, “Одесский кебаб”.</li>
+                    <li><strong>neurocyclops</strong> — один из главных людей визуальной весны: картинки, “мобайл”, “dodo пес”, пчёлы и прочий ранний интернетный осадок.</li>
+                    <li><strong>уr3t-r1t</strong> — грибной исследователь и человек производственного вайба: грузди, свинушки, “гриб ID” и резкие сообщения.</li>
+                    <li><strong>aura…)W</strong> — гость творческих заданий: tiermaker, YouTube, “АЛЕ СЛОН”, просьбы нарисовать что-то в стиле Симпсонов.</li>
+                    <li><strong>охота за Червями</strong> — важный участник канала “мутанты”, где текст почти не нужен, потому что всё говорят рисунки.</li>
                 </ul>
             </article>
 
-            <article class="lore-card">
-                <h2>Мемы и артефакты</h2>
-                <div class="lore-tags">
-                    <span class="lore-tag accent">greycat / грейкет</span>
-                    <span class="lore-tag">сырое яйцо 🥚</span>
-                    <span class="lore-tag">сын наркомана</span>
-                    <span class="lore-tag">мобайл</span>
-                    <span class="lore-tag accent">гриб ID</span>
-                    <span class="lore-tag">woodcock / kiwi</span>
-                    <span class="lore-tag">Gartic Phone</span>
-                    <span class="lore-tag">Spyfall</span>
-                    <span class="lore-tag">МУТАНТ VS НАВАЛЬНЫЙ</span>
-                    <span class="lore-tag">ЧЕЛОВЕК ЛОСЬ</span>
-                    <span class="lore-tag">ПТИЦЕКОРОБКА</span>
-                    <span class="lore-tag">УТОПЛЕННИК</span>
-                    <span class="lore-tag">Приорат Сиона</span>
-                    <span class="lore-tag">ζ / дзета-функция</span>
+            <section class="lore-timeline wide">
+                <h2>Хронология без пафоса</h2>
+                <ul class="lore-timeline-list">
+                    <li><strong>28 марта 2025:</strong> рождение названия. Сервер ещё маленький, но уже понятно: тут будут жить случайности.</li>
+                    <li><strong>Весна 2025:</strong> эпоха войса, сборов и первых внутренних фраз. Много “зайди”, “кого звать”, “лагает”, “я тебя не слышу”.</li>
+                    <li><strong>Апрель 2025:</strong> начинается визуальный поток. В канал летят предметы, персонажи, животные, странные скриншоты и картинки без долгого объяснения.</li>
+                    <li><strong>Май 2025:</strong> сервер превращается в реактор мемов: реакции, вложения, внезапные словосочетания, ночные серии сообщений.</li>
+                    <li><strong>Лето и декабрь 2025:</strong> грибы и птицы становятся отдельными языками. Если кинул woodcock, kiwi или гриб ID — это уже сообщение.</li>
+                    <li><strong>Декабрь 2025:</strong> появляется плотная ветка мутантов: рисунки, боссы, абсурдные существа, MOBA-билды и “кто бы победил”.</li>
+                    <li><strong>Февраль 2026:</strong> “мутные-болота” дают серверу почти полноценную фантастическую повесть про GC-781, CUC0-LD, жабу-рогатку и рыбобоида.</li>
+                    <li><strong>2026:</strong> сервер получает сайт, форум, шпиона и нормальный архив лора. То, что раньше терялось в чате, теперь можно открыть как музей.</li>
+                </ul>
+            </section>
+
+            <section class="lore-gallery wide">
+                <h2>Картинки из “общего”</h2>
+                <p>В “общем” картинки работают как погода. То прилетает обувь, то кот в очках, то сундук, то чей-то портрет, то клетка с существом, то огромная рыбная сеть. Смысл часто появляется уже после отправки.</p>
+                <div class="image-grid">
+                    <figure class="lore-shot"><img src="./assets/lore/general-01.jpg" alt="Белый высокий ботинок из архива общего" loading="lazy"><figcaption>первая предметная волна</figcaption></figure>
+                    <figure class="lore-shot"><img src="./assets/lore/general-02.jpg" alt="Белые ботинки из архива общего" loading="lazy"><figcaption>обувной диптих</figcaption></figure>
+                    <figure class="lore-shot"><img src="./assets/lore/general-03.jpg" alt="Кот в очках" loading="lazy"><figcaption>кот, который выглядит как участник суда</figcaption></figure>
+                    <figure class="lore-shot"><img src="./assets/lore/general-04.jpg" alt="Сундук с золотом и предметами" loading="lazy"><figcaption>сундук как состояние канала</figcaption></figure>
+                    <figure class="lore-shot"><img src="./assets/lore/general-05.jpg" alt="Скрин сообщения Васелинкью" loading="lazy"><figcaption>одиночный скрин-артефакт</figcaption></figure>
+                    <figure class="lore-shot"><img src="./assets/lore/general-06.jpg" alt="Портрет человека в оранжевой форме" loading="lazy"><figcaption>портретная эпоха</figcaption></figure>
+                    <figure class="lore-shot"><img src="./assets/lore/general-07.jpg" alt="Мобильный скрин с наградой" loading="lazy"><figcaption>мобайл как отдельный жанр</figcaption></figure>
+                    <figure class="lore-shot"><img src="./assets/lore/general-08.jpg" alt="Существо в клетке" loading="lazy"><figcaption>клетка, существо, вопрос без ответа</figcaption></figure>
+                    <figure class="lore-shot"><img src="./assets/lore/general-09.jpg" alt="Зелёный персонаж за столом" loading="lazy"><figcaption>зеленый кабинет</figcaption></figure>
+                    <figure class="lore-shot"><img src="./assets/lore/general-10.jpg" alt="Огромная рыболовная сеть на корабле" loading="lazy"><figcaption>когда мем становится промышленным</figcaption></figure>
                 </div>
+            </section>
+
+            <article class="lore-card">
+                <h2>Грибы, птицы и прочая вера</h2>
+                <p>Грибная часть начинается как обычная подборка слов и картинок, но быстро становится почти религией. Груздь горький, свинушка толстая, fungi, mushroom, “гриб ID” — всё это не просто названия. Это способ говорить “я принёс странность, принимайте”.</p>
+                <p>Птичья линия работает так же. Woodcock, kiwi, duck, bird walk, toucan — птицы в канале не объясняют шутку, они сами шутка. Птица появляется, разговор на секунду меняет форму, и все будто понимают, что так и должно быть.</p>
+            </article>
+
+            <article class="lore-card">
+                <h2>Игровой слой</h2>
+                <p>Factorio мелькает ещё в первый день как идея “купить или не купить”. Позже появляются Gartic Phone и Spyfall. Это важный переход: сервер перестаёт быть только чатом и начинает собираться вокруг действий. Рисовать, угадывать, подозревать, спорить, кто шпион. Из этого потом логично выросла отдельная вкладка “Шпион” на сайте.</p>
+                <p>MOBA-билды из канала “мутанты-билды” — отдельный смешной музей. Там персонажи уже не просто картинки, а будто герои, которым надо выдать предметы, роль и матчап.</p>
+            </article>
+
+            <section class="lore-gallery wide">
+                <h2>Мутанты</h2>
+                <p>Канал “мутанты” почти не разговаривает текстом. Он показывает. Там существа, кривые войны, кислотные пейзажи, Питер Гриффин рядом с монстрами, рыбы с часами, улитки и болотные силуэты. Это не “арт-раздел”, а бестиарий сервера.</p>
+                <div class="image-grid large">
+                    <figure class="lore-shot"><img src="./assets/lore/mutant-01.jpg" alt="Рисунок мутантов с цветными персонажами" loading="lazy"><figcaption>первый зал бестиария</figcaption></figure>
+                    <figure class="lore-shot"><img src="./assets/lore/mutant-02.jpg" alt="Рисованный мутантский пейзаж" loading="lazy"><figcaption>земля, где всё уже случилось</figcaption></figure>
+                    <figure class="lore-shot"><img src="./assets/lore/mutant-03.jpg" alt="Рисованный монстр с крыльями" loading="lazy"><figcaption>существо без объяснительной</figcaption></figure>
+                    <figure class="lore-shot"><img src="./assets/lore/mutant-04.jpg" alt="Питер Гриффин и зелёный мутант" loading="lazy"><figcaption>кроссовер, который не просили</figcaption></figure>
+                    <figure class="lore-shot"><img src="./assets/lore/mutant-05.jpg" alt="Мутант-рыба с часами" loading="lazy"><figcaption>рыба времени</figcaption></figure>
+                    <figure class="lore-shot"><img src="./assets/lore/mutant-06.jpg" alt="Улитка и болотный рисунок" loading="lazy"><figcaption>медленная угроза</figcaption></figure>
+                </div>
+            </section>
+
+            <section class="lore-gallery wide">
+                <h2>Мутанты-билды</h2>
+                <p>Если “мутанты” — это бестиарий, то “мутанты-билды” — его раздевалка перед матчем. Героям выдают предметы, роли и видимость баланса. Тут особенно смешно, что абсурдные персонажи получают почти серьёзную MOBA-логику.</p>
+                <div class="image-grid large">
+                    <figure class="lore-shot"><img src="./assets/lore/build-01.jpg" alt="MOBA-билд персонажа егор муляр" loading="lazy"><figcaption>егор муляр выходит в матч</figcaption></figure>
+                    <figure class="lore-shot"><img src="./assets/lore/build-02.jpg" alt="MOBA-билд porcelain corpse" loading="lazy"><figcaption>porcelain corpse и предметы</figcaption></figure>
+                    <figure class="lore-shot"><img src="./assets/lore/build-03.jpg" alt="Подробный билд персонажа porcelain corpse" loading="lazy"><figcaption>когда шутка уже с характеристиками</figcaption></figure>
+                </div>
+            </section>
+
+            <section class="lore-note wide">
+                <h2>Мутные болота: отдельная повесть</h2>
+                <p>14 февраля 2026 в “мутных-болотах” началась самая цельная сюжетная ветка. Главный герой — астронавт <strong>GC-781</strong> с неизвестной планеты <strong>UR3-TR4</strong>. После катастрофы он уходит в странствия по галактикам, а его личный ассистент корабля <strong>CUC0-LD</strong> остаётся последним умным куском прежней цивилизации.</p>
+                <p>Потом всё ломается. Навигация сбоит, корабль падает на планету с густыми болотами, лесами и разрушенной экосистемой. GC-781 выживает, снимает ремни со скафандра, делает упряжь и находит огромную жабу-рогатку. Жаба становится транспортом, защитой и почти другом.</p>
+                <p>Но болота не пустые. За астронавтом следит рыбобоид-гуманоид — древний житель мутной воды. Он наблюдает, ждёт, нападает. В какой-то момент GC-781 защищает не себя, а жабу. После схватки рыбобоид исчезает, будто само болото его забрало. История остаётся открытой: астронавт стоит среди тумана, а планета явно ещё не сказала последнего слова.</p>
+            </section>
+
+            <section class="lore-gallery wide">
+                <h2>Вся болотная глава в картинках</h2>
+                <div class="image-grid large">
+                    <figure class="lore-shot"><img src="./assets/lore/swamp-01.jpg" alt="Астронавт GC-781" loading="lazy"><figcaption>GC-781: мозг в шлеме, герой не с той планеты</figcaption></figure>
+                    <figure class="lore-shot"><img src="./assets/lore/swamp-02.jpg" alt="Ассистент CUC0-LD" loading="lazy"><figcaption>CUC0-LD, корабельный ассистент</figcaption></figure>
+                    <figure class="lore-shot"><img src="./assets/lore/swamp-03.jpg" alt="Крушение корабля в болотах" loading="lazy"><figcaption>полёт заканчивается болотом</figcaption></figure>
+                    <figure class="lore-shot"><img src="./assets/lore/swamp-04.jpg" alt="Астронавт после крушения" loading="lazy"><figcaption>первый выход после аварии</figcaption></figure>
+                    <figure class="lore-shot"><img src="./assets/lore/swamp-05.jpg" alt="Астронавт в лесу" loading="lazy"><figcaption>поиск укрытия</figcaption></figure>
+                    <figure class="lore-shot"><img src="./assets/lore/swamp-06.jpg" alt="Астронавт верхом на жабе" loading="lazy"><figcaption>жаба-рогатка становится транспортом</figcaption></figure>
+                    <figure class="lore-shot"><img src="./assets/lore/swamp-07.jpg" alt="Рыбобоид наблюдает из болота" loading="lazy"><figcaption>рыбобоид выходит из глубин</figcaption></figure>
+                    <figure class="lore-shot"><img src="./assets/lore/swamp-08.jpg" alt="Туман в болотах" loading="lazy"><figcaption>планета задерживает дыхание</figcaption></figure>
+                    <figure class="lore-shot"><img src="./assets/lore/swamp-09.jpg" alt="Битва астронавта, жабы и рыбобоида" loading="lazy"><figcaption>схватка у воды</figcaption></figure>
+                    <figure class="lore-shot"><img src="./assets/lore/swamp-10.jpg" alt="Астронавт и жаба после битвы" loading="lazy"><figcaption>после ряби остаётся тишина</figcaption></figure>
+                </div>
+            </section>
+
+            <article class="lore-card">
+                <h2>Словарь сервера</h2>
+                <div class="tag-cloud">
+                    <span class="tag accent">greycat / грейкет</span>
+                    <span class="tag">халупа червяка</span>
+                    <span class="tag">сырое яйцо</span>
+                    <span class="tag">мобайл</span>
+                    <span class="tag accent">гриб ID</span>
+                    <span class="tag">woodcock / kiwi</span>
+                    <span class="tag">Gartic Phone</span>
+                    <span class="tag">Spyfall</span>
+                    <span class="tag">МУТАНТ VS НАВАЛЬНЫЙ</span>
+                    <span class="tag">ЧЕЛОВЕК ЛОСЬ</span>
+                    <span class="tag">ПТИЦЕКОРОБКА</span>
+                    <span class="tag">УТОПЛЕННИК</span>
+                    <span class="tag">Приорат Сиона</span>
+                    <span class="tag">дзета-функция</span>
+                    <span class="tag accent">GC-781</span>
+                    <span class="tag">CUC0-LD</span>
+                    <span class="tag">рыбобоид</span>
+                    <span class="tag">жаба-рогатка</span>
+                </div>
+            </article>
+
+            <article class="lore-card">
+                <h2>Что это за место в итоге</h2>
+                <p>greycat781 держится не на одной большой шутке, а на привычке всё сохранять в общий котёл. Один приносит картинку, второй отвечает фразой, третий делает из этого персонажа, четвёртый кидает билд, пятый через месяц вспоминает как будто так и было всегда.</p>
+                <p>Поэтому лор сервера выглядит не как книга, а как комната после длинной ночи: на столе мутанты, в углу грибы, на стене птицы, на полу болотный астронавт, а где-то сверху всё ещё висит вопрос “че за грейкет”.</p>
             </article>
         </section>
     </main>
