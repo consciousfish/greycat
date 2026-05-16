@@ -5,10 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>greycat781 — Главная</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .particle {
+            position: fixed;
+            width: 72px;
+            height: 72px;
+            left: 0;
+            top: 0;
+            z-index: 2000;
+            pointer-events: none;
+            object-fit: cover;
+            border-radius: 8px;
+            animation: particle-burst 900ms ease-out forwards;
+            --tx: 0px;
+            --ty: 0px;
+            --rot: 0deg;
+        }
+        .particle.text {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 56px;
+            line-height: 1;
+        }
+        @keyframes particle-burst {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(0.65) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1.15) rotate(var(--rot));
+            }
+        }
+        .emoji-admin {
+            display: none;
+            position: fixed;
+            right: 14px;
+            bottom: 14px;
+            z-index: 2100;
+            background: #181818;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            padding: 10px;
+            color: #999;
+            font-size: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+        }
+        .emoji-admin label {
+            color: #ff5500;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        .logo {
+            cursor: pointer;
+            user-select: none;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
-        <div class="logo">greycat781</div>
+        <div class="logo" onclick="if(event.ctrlKey) unlockEmojiAdmin()">greycat781</div>
         <ul class="nav-links">
             <li><a href="./index.html">Главная</a></li>
             <li><a href="./wall.html">Форум</a></li>
@@ -23,5 +80,78 @@
             <p class="subtitle">халупа червяка</p>
         </section>
     </main>
+    <div id="emojiAdmin" class="emoji-admin">
+        <label>
+            Заменить эмодзи
+            <input type="file" accept="image/*" onchange="setEmojiImage(event)" style="display:none;">
+        </label>
+        <button onclick="resetEmojiImage()" style="margin-left:8px;background:#2a1010;color:#e03c3c;border:1px solid rgba(224,60,60,0.35);border-radius:6px;padding:6px 8px;cursor:pointer;">Сброс</button>
+    </div>
+    <script>
+        const ADMIN_PASS = "cat781grey";
+        const DEFAULT_PARTICLES = ['✨', '🔥', '💥', '⭐', '🧡', '🎮'];
+        let customParticleImage = localStorage.getItem('home_particle_image') || '';
+
+        function hasEmojiAdminAccess() {
+            return localStorage.getItem('forum_admin_unlocked') === 'true';
+        }
+
+        function updateEmojiAdmin() {
+            const panel = document.getElementById('emojiAdmin');
+            if (panel) panel.style.display = hasEmojiAdminAccess() ? 'block' : 'none';
+        }
+
+        function unlockEmojiAdmin() {
+            if (hasEmojiAdminAccess()) {
+                updateEmojiAdmin();
+                return;
+            }
+            const pass = prompt('Пароль модератора:');
+            if (pass === ADMIN_PASS) {
+                localStorage.setItem('forum_admin_unlocked', 'true');
+                localStorage.setItem('forum_admin_mode', 'true');
+                updateEmojiAdmin();
+            } else if (pass !== null) {
+                alert('Неверный пароль!');
+            }
+        }
+
+        window.setEmojiImage = function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                customParticleImage = e.target.result;
+                localStorage.setItem('home_particle_image', customParticleImage);
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.resetEmojiImage = function() {
+            customParticleImage = '';
+            localStorage.removeItem('home_particle_image');
+        };
+
+        document.addEventListener('click', (event) => {
+            if (event.target.closest('a, button, input, label')) return;
+            for (let i = 0; i < 10; i += 1) {
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 70 + Math.random() * 150;
+                const particle = customParticleImage ? document.createElement('img') : document.createElement('div');
+                particle.className = customParticleImage ? 'particle' : 'particle text';
+                if (customParticleImage) particle.src = customParticleImage;
+                else particle.textContent = DEFAULT_PARTICLES[Math.floor(Math.random() * DEFAULT_PARTICLES.length)];
+                particle.style.left = `${event.clientX}px`;
+                particle.style.top = `${event.clientY}px`;
+                particle.style.setProperty('--tx', `${Math.cos(angle) * distance}px`);
+                particle.style.setProperty('--ty', `${Math.sin(angle) * distance}px`);
+                particle.style.setProperty('--rot', `${Math.floor(Math.random() * 240 - 120)}deg`);
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 950);
+            }
+        });
+
+        updateEmojiAdmin();
+    </script>
 </body>
 </html>

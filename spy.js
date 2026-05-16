@@ -6,6 +6,7 @@ const ROOM_PREFIX = '[greycat-spy-room]';
 const PLAYER_ID_KEY = 'spy_player_id';
 const CUSTOM_PACKS_KEY = 'spy_custom_packs';
 const ROOM_POLL_MS = 1800;
+const ADMIN_PASS = 'cat781grey';
 
 const DEFAULT_PACKS = [
     { id: 'games', name: 'Игры', words: ['Minecraft', 'Dota 2', 'Roblox', 'Among Us', 'Counter-Strike', 'GTA', 'Fortnite', 'Terraria'] },
@@ -70,6 +71,29 @@ function getLocalCustomPacks() {
     }
 }
 
+function hasAdminAccess() {
+    return localStorage.getItem('forum_admin_unlocked') === 'true';
+}
+
+window.unlockAdmin = function() {
+    if (hasAdminAccess()) {
+        renderRoom();
+        return;
+    }
+    const pass = prompt('Пароль модератора:');
+    if (pass === ADMIN_PASS) {
+        localStorage.setItem('forum_admin_unlocked', 'true');
+        localStorage.setItem('forum_admin_mode', 'true');
+        renderRoom();
+    } else if (pass !== null) {
+        alert('Неверный пароль!');
+    }
+};
+
+function canManagePacks() {
+    return isHost() || hasAdminAccess();
+}
+
 function saveLocalCustomPack(pack) {
     const packs = getLocalCustomPacks().filter(item => item.id !== pack.id);
     packs.push(pack);
@@ -78,11 +102,15 @@ function saveLocalCustomPack(pack) {
 
 function getRoomPacks(room) {
     const roomCustomPacks = room && Array.isArray(room.customPacks) ? room.customPacks : [];
-    const merged = [...DEFAULT_PACKS];
-    [...getLocalCustomPacks(), ...roomCustomPacks].forEach(pack => {
-        if (!merged.some(item => item.id === pack.id)) merged.push(pack);
+    const deleted = new Set(room && Array.isArray(room.deletedPackIds) ? room.deletedPackIds : []);
+    const packMap = new Map();
+    DEFAULT_PACKS.forEach(pack => {
+        if (!deleted.has(pack.id)) packMap.set(pack.id, { ...pack, source: 'default' });
     });
-    return merged;
+    [...getLocalCustomPacks(), ...roomCustomPacks].forEach(pack => {
+        if (!deleted.has(pack.id)) packMap.set(pack.id, { ...pack, source: pack.ownerId ? 'custom' : 'default' });
+    });
+    return Array.from(packMap.values());
 }
 
 function getSelectedWords(room) {
@@ -179,6 +207,7 @@ window.createRoom = async function() {
         hostId: playerId,
         players: [{ id: playerId, name: playerName }],
         customPacks: [],
+        deletedPackIds: [],
         selectedPackIds: DEFAULT_PACKS.map(pack => pack.id),
         phase: 'lobby',
         spyId: null,
@@ -186,6 +215,7 @@ window.createRoom = async function() {
         selectedWords: [],
         startedAt: null,
         durationSec: 300,
+        votes: {},
         createdAt: Date.now(),
         updatedAt: Date.now()
     };
@@ -289,6 +319,48 @@ window.togglePack = async function(packId, checked) {
     await updateRoom({ ...currentRoom, selectedPackIds: Array.from(selected) });
 };
 
+window.editPack = async function(packId) {
+    if (!currentRoom || !canManagePacks()) return;
+    const pack = getRoomPacks(currentRoom).find(item => item.id === packId);
+    if (!pack) return;
+    const nextName = prompt('Новое название пака:', pack.name);
+    if (!nextName || !nextName.trim()) return;
+    const nextWordsRaw = prompt('Слова/фразы через запятую:', (pack.words || []).join(', '));
+    if (nextWordsRaw === null) return;
+    const nextWords = nextWordsRaw.split(',').map(word => word.trim()).filter(Boolean);
+    if (nextWords.length < 2) {
+        alert('В паке должно быть минимум 2 слова.');
+        return;
+    }
+    const updatedPack = {
+        id: pack.id,
+        name: nextName.trim(),
+        words: nextWords,
+        ownerId: pack.ownerId || playerId
+    };
+    const customPacks = (currentRoom.customPacks || []).filter(item => item.id !== pack.id);
+    customPacks.push(updatedPack);
+    await updateRoom({ ...currentRoom, customPacks });
+};
+
+window.deletePack = async function(packId) {
+    if (!currentRoom || !canManagePacks()) return;
+    const pack = getRoomPacks(currentRoom).find(item => item.id === packId);
+    if (!pack) return;
+    if (!confirm(`Удалить пак "${pack.name}" из этой комнаты?`)) return;
+    const customPacks = (currentRoom.customPacks || []).filter(item => item.id !== packId);
+    const deletedPackIds = new Set(currentRoom.deletedPackIds || []);
+    deletedPackIds.add(packId);
+    const selectedPackIds = (currentRoom.selectedPackIds || []).filter(id => id !== packId);
+    await updateRoom({ ...currentRoom, customPacks, deletedPackIds: Array.from(deletedPackIds), selectedPackIds });
+};
+
+window.setGameDuration = async function(value) {
+    if (!isHost() || !currentRoom || currentRoom.phase !== 'lobby') return;
+    const minutes = Math.max(1, Math.min(30, parseInt(value, 10) || 5));
+    await updateRoom({ ...currentRoom, durationSec: minutes * 60 });
+};
+
 window.startGame = async function() {
     if (!isHost() || !currentRoom) return;
     if ((currentRoom.players || []).length < 3) {
@@ -310,7 +382,8 @@ window.startGame = async function() {
         secretWord,
         selectedWords,
         startedAt: Date.now(),
-        durationSec: 300
+        durationSec: currentRoom.durationSec || 300,
+        votes: {}
     });
 };
 
@@ -333,19 +406,29 @@ function renderPacks() {
     const packList = document.getElementById('packList');
     const lobbyControls = document.getElementById('lobbyControls');
     const startBtn = document.getElementById('startBtn');
+    const timeControl = document.getElementById('timeControl');
+    const durationInput = document.getElementById('durationInput');
     const inLobby = currentRoom.phase === 'lobby';
     lobbyControls.classList.toggle('hidden', !inLobby);
     startBtn.style.display = isHost() ? 'inline-flex' : 'none';
+    timeControl.style.display = isHost() ? 'flex' : 'none';
+    if (durationInput) durationInput.value = Math.round((currentRoom.durationSec || 300) / 60);
 
     const selected = new Set(currentRoom.selectedPackIds || []);
     packList.innerHTML = getRoomPacks(currentRoom).map(pack => `
-        <label class="pack-card">
+        <div class="pack-card">
             <input type="checkbox" ${selected.has(pack.id) ? 'checked' : ''} ${isHost() ? '' : 'disabled'} onchange="togglePack('${pack.id}', this.checked)">
-            <span>
+            <span class="pack-body">
                 <span class="pack-name">${escapeHTML(pack.name)}</span>
                 <span class="pack-count">${(pack.words || []).length} слов</span>
+                ${canManagePacks() ? `
+                    <span class="pack-actions" style="display:flex;">
+                        <button class="secondary" onclick="editPack('${pack.id}')">Изм.</button>
+                        <button class="danger" onclick="deletePack('${pack.id}')">Удал.</button>
+                    </span>
+                ` : ''}
             </span>
-        </label>
+        </div>
     `).join('');
 }
 
@@ -359,9 +442,37 @@ function renderMatch() {
 
     const words = currentRoom.selectedWords || getSelectedWords(currentRoom);
     document.getElementById('possibleWords').innerHTML = words.map(word => `<span class="pill">${escapeHTML(word)}</span>`).join('');
+    renderVoting();
     hideRole();
     startTimer();
 }
+
+function renderVoting() {
+    const voteList = document.getElementById('voteList');
+    if (!voteList) return;
+    const votes = currentRoom.votes || {};
+    const counts = {};
+    Object.values(votes).forEach(targetId => {
+        counts[targetId] = (counts[targetId] || 0) + 1;
+    });
+    voteList.innerHTML = (currentRoom.players || []).map(player => {
+        const isVoted = votes[playerId] === player.id;
+        return `
+            <div class="vote-row">
+                <span>${escapeHTML(player.name)} · ${counts[player.id] || 0} голосов</span>
+                <button class="${isVoted ? '' : 'secondary'}" onclick="voteForSpy('${player.id}')">${isVoted ? 'Выбран' : 'Голос'}</button>
+            </div>
+        `;
+    }).join('');
+}
+
+window.voteForSpy = async function(targetId) {
+    if (!currentRoom || currentRoom.phase !== 'game') return;
+    const votes = { ...(currentRoom.votes || {}) };
+    if (votes[playerId] === targetId) delete votes[playerId];
+    else votes[playerId] = targetId;
+    await updateRoom({ ...currentRoom, votes });
+};
 
 function startTimer() {
     if (timerInterval) clearInterval(timerInterval);

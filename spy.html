@@ -24,6 +24,8 @@
             color: #ff5500;
             text-transform: lowercase;
             letter-spacing: -0.5px;
+            cursor: pointer;
+            user-select: none;
         }
         header nav {
             display: flex;
@@ -191,6 +193,20 @@
             border-radius: 8px;
             padding: 11px 12px;
         }
+        .pack-body {
+            flex: 1;
+            min-width: 0;
+        }
+        .pack-actions {
+            display: none;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .pack-actions button {
+            padding: 6px 8px;
+            font-size: 11px;
+            border-radius: 6px;
+        }
         .pack-card input {
             width: auto;
             margin-top: 2px;
@@ -232,6 +248,26 @@
             letter-spacing: 0.04em;
             margin: 6px 0 12px;
         }
+        .vote-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .vote-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            background: #181818;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            padding: 8px 10px;
+        }
+        .vote-row button {
+            padding: 7px 10px;
+            font-size: 12px;
+        }
         .hidden { display: none !important; }
         @media (max-width: 780px) {
             .spy-grid { grid-template-columns: 1fr; }
@@ -242,7 +278,7 @@
 </head>
 <body>
     <header>
-        <div class="logo">greycat781</div>
+        <div class="logo" onclick="if(event.ctrlKey) unlockAdmin()">greycat781</div>
         <nav>
             <a href="index.html">Главная</a>
             <a href="wall.html">Форум</a>
@@ -284,6 +320,10 @@
                         <h2>Паки для замеса</h2>
                         <p class="muted">Хост выбирает галочками, какие паки попадут в игру. Кастомный пак можно добавить прямо здесь.</p>
                         <div id="packList" class="pack-list"></div>
+                        <div id="timeControl" class="row" style="margin-top:12px;">
+                            <input id="durationInput" type="number" min="1" max="30" value="5" style="width:120px;" onchange="setGameDuration(this.value)">
+                            <span class="muted">минут на раунд</span>
+                        </div>
                         <div class="panel" style="margin-top:12px;border-left-color:#333;">
                             <h2>Свой пак</h2>
                             <div class="row" style="margin-bottom:10px;">
@@ -315,6 +355,10 @@
                     <div style="margin-top:18px;">
                         <h2>Слова в игре</h2>
                         <div id="possibleWords" class="word-list"></div>
+                    </div>
+                    <div style="margin-top:18px;">
+                        <h2>Голосование</h2>
+                        <div id="voteList" class="vote-list"></div>
                     </div>
                 </div>
             </aside>
