@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>greycat781 — Лор</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .lore-page {
+            max-width: 1080px;
+            margin: 132px auto 60px;
+            padding: 0 20px;
+        }
+        .lore-hero {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) minmax(260px, 0.75fr);
+            gap: 16px;
+            align-items: stretch;
+            margin-bottom: 18px;
+        }
+        .lore-title-card,
+        .lore-stat-card,
+        .lore-card,
+        .timeline-card {
+            background: #1f1f1f;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            text-align: left;
+        }
+        .lore-title-card {
+            padding: 28px;
+            border-left: 3px solid #ff5500;
+        }
+        .lore-kicker {
+            color: #ff5500;
+            font-size: 0.78rem;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .lore-title-card h1 {
+            margin: 10px 0 12px;
+            color: #fff;
+            font-size: clamp(2.2rem, 7vw, 5.2rem);
+            line-height: 0.95;
+            letter-spacing: 0;
+            font-weight: 900;
+        }
+        .lore-title-card p {
+            max-width: 740px;
+            margin: 0;
+            color: #b8b8b8;
+            font-size: 1rem;
+            line-height: 1.65;
+        }
+        .lore-stat-card {
+            display: grid;
+            align-content: center;
+            gap: 12px;
+            padding: 22px;
+            background:
+                linear-gradient(135deg, rgba(255,85,0,0.14), transparent 42%),
+                #181818;
+        }
+        .lore-stat {
+            padding-bottom: 12px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        .lore-stat:last-child {
+            padding-bottom: 0;
+            border-bottom: 0;
+        }
+        .lore-stat strong {
+            display: block;
+            color: #fff;
+            font-size: 1.45rem;
+            font-weight: 900;
+        }
+        .lore-stat span {
+            color: #999;
+            font-size: 0.86rem;
+        }
+        .lore-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+        .lore-card,
+        .timeline-card {
+            padding: 18px;
+        }
+        .lore-card.wide,
+        .timeline-card {
+            grid-column: 1 / -1;
+        }
+        .lore-card h2,
+        .timeline-card h2 {
+            margin: 0 0 12px;
+            color: #fff;
+            font-size: 1.15rem;
+            font-weight: 900;
+            letter-spacing: 0;
+        }
+        .lore-card p,
+        .timeline-card p {
+            margin: 0;
+            color: #cfcfcf;
+            font-size: 0.95rem;
+            line-height: 1.65;
+        }
+        .lore-quote {
+            margin-top: 14px;
+            padding: 12px 14px;
+            background: #181818;
+            border: 1px solid #2a2a2a;
+            border-left: 3px solid #ff5500;
+            border-radius: 8px;
+            color: #ff7733;
+            font-weight: 800;
+            line-height: 1.45;
+        }
+        .cast-list,
+        .lore-list,
+        .timeline-list {
+            display: grid;
+            gap: 10px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .cast-list li,
+        .lore-list li {
+            color: #cfcfcf;
+            font-size: 0.93rem;
+            line-height: 1.52;
+        }
+        .cast-list strong,
+        .lore-list strong,
+        .timeline-list strong {
+            color: #fff;
+        }
+        .timeline-list {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+        .timeline-list li {
+            position: relative;
+            min-height: 100%;
+            padding: 14px 14px 14px 18px;
+            background: #181818;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            color: #cfcfcf;
+            font-size: 0.92rem;
+            line-height: 1.5;
+        }
+        .timeline-list li::before {
+            content: '';
+            position: absolute;
+            left: -1px;
+            top: 14px;
+            bottom: 14px;
+            width: 3px;
+            border-radius: 3px;
+            background: #ff5500;
+        }
+        .lore-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .lore-tag {
+            background: #181818;
+            border: 1px solid #2a2a2a;
+            color: #ccc;
+            border-radius: 999px;
+            padding: 7px 10px;
+            font-size: 0.82rem;
+            font-weight: 800;
+        }
+        .lore-tag.accent {
+            color: #fff;
+            border-color: #ff5500;
+            background: #2a1a10;
+        }
+        @media (max-width: 760px) {
+            .lore-page {
+                margin-top: 126px;
+                padding: 0 12px 32px;
+            }
+            .lore-hero,
+            .lore-grid,
+            .timeline-list {
+                grid-template-columns: 1fr;
+            }
+            .lore-title-card {
+                padding: 22px;
+            }
+            .lore-title-card h1 {
+                font-size: 2.8rem;
+            }
+            .lore-card,
+            .timeline-card,
+            .lore-stat-card {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">greycat781</div>
+        <ul class="nav-links">
+            <li><a href="./index.html">Главная</a></li>
+            <li><a href="./lore.html" class="active">Лор</a></li>
+            <li><a href="./wall.html">Форум</a></li>
+            <li><a href="./spy.html">Шпион</a></li>
+            <li><a href="https://discord.gg/9FV6q4qbjm" target="_blank" class="discord-btn">Discord</a></li>
+        </ul>
+    </nav>
+
+    <main class="lore-page">
+        <section class="lore-hero">
+            <article class="lore-title-card">
+                <div class="lore-kicker">архив канала общее</div>
+                <h1>Лор greycat781</h1>
+                <p>Полная история сервера из 1653 сообщений: как случайно названная войс-хата превратилась в маленькую мифологию из грибов, птиц, картинок, Gartic Phone, Spyfall, странных фраз и локальных мемов.</p>
+            </article>
+
+            <aside class="lore-stat-card" aria-label="Краткая сводка">
+                <div class="lore-stat">
+                    <strong>28.03.2025</strong>
+                    <span>рождение greycat781</span>
+                </div>
+                <div class="lore-stat">
+                    <strong>1653</strong>
+                    <span>сообщения в архиве</span>
+                </div>
+                <div class="lore-stat">
+                    <strong>2025–2026</strong>
+                    <span>эпохи войса, грибов, птиц и игр</span>
+                </div>
+            </aside>
+        </section>
+
+        <section class="lore-grid">
+            <article class="lore-card wide">
+                <h2>Главный канон</h2>
+                <p><strong>greycat781</strong> родился 28 марта 2025 почти случайно. Первый вопрос был простой: “че за грейкет”. Потом пошло обсуждение, что название угарное, “типо как бум бокс”. Scarlet признал, что поставил первое, что пришло в голову. Так сервер сразу получил главный стиль: не бренд, не проект, не строгая структура, а случайная фраза, которая внезапно стала местом. С этого момента сервер живёт циклами: сбор людей в войс, поток картинок, грибная секта, птицы, Gartic Phone, Spyfall, поздний GIF-хаос, музыка, ссылки, сайт и форум.</p>
+                <div class="lore-quote">Коротко: greycat781 — это халупа червяка, где грибы стали религией, птицы стали языком, а любое случайное слово может стать историческим событием.</div>
+            </article>
+
+            <article class="lore-card">
+                <h2>Главные участники</h2>
+                <ul class="cast-list">
+                    <li><strong>Scarlet</strong> — центральная ось сервера, главный двигатель активностей, Gartic, GIF, ссылок, сайта и общего визуального хаоса.</li>
+                    <li><strong>фригидный2009</strong> — сооснователь атмосферы: первым реагирует на greycat, зовёт в войс, пингует, ловит лаги и запускает бытовую панику.</li>
+                    <li><strong>KroJluK-k0n@et О.О</strong> — шаман коротких сообщений: “🧠”, “мозг”, “ПТИЦЕКОРОБКА”, “УТОПЛЕННИК”, символы и слова-таблички из сна.</li>
+                    <li><strong>ВИКТОР</strong> — драматический диктор поздней эпохи: “МУТАНТ VS НАВАЛЬНЫЙ”, “ПРОСТО БОСС”, “НАЧАЛЬНИК”, “ЧЕЛОВЕК ЛОСЬ”.</li>
+                </ul>
+            </article>
+
+            <article class="lore-card">
+                <h2>Второй круг</h2>
+                <ul class="cast-list">
+                    <li><strong>woeloshell</strong> — ранний навигатор и архивариус терминов: “Синтаксис”, “ДЖУГАТЬ КЭШ”, “Лопатсьон”, “Одесский кебаб”.</li>
+                    <li><strong>уr3t-r1t</strong> — полевой исследователь грибов и крика: “груздь горький”, “свинушка толстая”, “гриб ID”, производственный вайб.</li>
+                    <li><strong>neurocyclops</strong> — визуальный археолог апреля: “мобайл”, “dodo пес”, пчёлы, серии картинок и странные находки.</li>
+                    <li><strong>aura…)W</strong> — творческий гость: tiermaker, YouTube, “АЛЕ СЛОН”, задания нарисовать жену в стиле Симпсонов.</li>
+                </ul>
+            </article>
+
+            <article class="timeline-card">
+                <h2>Эпохи сервера</h2>
+                <ul class="timeline-list">
+                    <li><strong>28.03.2025 — Рождение Greycat:</strong> название принимается через смех и становится точкой сборки.</li>
+                    <li><strong>Весна 2025 — Войс и сборы:</strong> “войс”, “зайди”, “кого звать”, “лагает”, “я тебя не слышу”.</li>
+                    <li><strong>10–18.04.2025 — Визуальный потоп:</strong> картинки, “мобайл”, “dodo пес”, “кепочка мита”, пчёлы.</li>
+                    <li><strong>13.05.2025 — Мем-реактор:</strong> ночь реакций, вложений, 👍, 🤣 и “История клецок и их собратьев”.</li>
+                    <li><strong>16.05 и 06.12.2025 — Грибная секта:</strong> fungi, mushroom, “груздь горький”, “свинушка толстая”, приложение “гриб ID”.</li>
+                    <li><strong>Лето и декабрь 2025 — Птичий язык:</strong> woodcock, kiwi, duck, bird walk, toucan. Кинул птицу — сказал всё.</li>
+                    <li><strong>Декабрь 2025 — Gartic / Spyfall:</strong> коллективные игровые ритуалы, из которых выросла вкладка “Шпион”.</li>
+                    <li><strong>2026 — Эзотерика:</strong> “ТЕОДОР ГОФМАН ЭРНСТ АМАДЕЙ”, “Приорат Сиона”, “ζ”, “ЧЕЛОВЕК ЛОСЬ”.</li>
+                </ul>
+            </article>
+
+            <article class="lore-card">
+                <h2>Поздний канон</h2>
+                <ul class="lore-list">
+                    <li><strong>GIF-хаос:</strong> поздняя жизнь сервера становится визуальной: реакции, вложения, быстрые картинки и внезапные связки слов.</li>
+                    <li><strong>Музыка и ссылки:</strong> YouTube, странные находки, tiermaker и внешние штуки становятся топливом разговоров.</li>
+                    <li><strong>Сайт и форум:</strong> сервер получает свою площадку, где “стена” превращается в форум, борды, шпиона и теперь отдельную страницу лора.</li>
+                </ul>
+            </article>
+
+            <article class="lore-card">
+                <h2>Мемы и артефакты</h2>
+                <div class="lore-tags">
+                    <span class="lore-tag accent">greycat / грейкет</span>
+                    <span class="lore-tag">сырое яйцо 🥚</span>
+                    <span class="lore-tag">сын наркомана</span>
+                    <span class="lore-tag">мобайл</span>
+                    <span class="lore-tag accent">гриб ID</span>
+                    <span class="lore-tag">woodcock / kiwi</span>
+                    <span class="lore-tag">Gartic Phone</span>
+                    <span class="lore-tag">Spyfall</span>
+                    <span class="lore-tag">МУТАНТ VS НАВАЛЬНЫЙ</span>
+                    <span class="lore-tag">ЧЕЛОВЕК ЛОСЬ</span>
+                    <span class="lore-tag">ПТИЦЕКОРОБКА</span>
+                    <span class="lore-tag">УТОПЛЕННИК</span>
+                    <span class="lore-tag">Приорат Сиона</span>
+                    <span class="lore-tag">ζ / дзета-функция</span>
+                </div>
+            </article>
+        </section>
+    </main>
+</body>
+</html>

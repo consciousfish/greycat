@@ -85,6 +85,10 @@ body {
     border-color: var(--border-hover);
 }
 
+.nav-links a.active {
+    color: var(--text-primary);
+}
+
 .discord-btn {
     background: var(--accent) !important;
     color: white !important;
