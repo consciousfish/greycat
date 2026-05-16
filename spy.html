@@ -270,8 +270,73 @@
         }
         .hidden { display: none !important; }
         @media (max-width: 780px) {
-            .spy-grid { grid-template-columns: 1fr; }
-            .main-content { margin-top: 132px; }
+            header {
+                gap: 10px;
+                padding: 12px;
+            }
+            header .logo {
+                font-size: 1.2rem;
+            }
+            header nav {
+                gap: 5px;
+            }
+            header nav a,
+            .discord-btn {
+                font-size: 0.8rem !important;
+                padding: 7px 11px !important;
+            }
+            .spy-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            .main-content {
+                margin-top: 116px;
+                padding: 0 10px;
+            }
+            h1 {
+                font-size: 1.6rem;
+                margin-bottom: 18px;
+            }
+            .panel {
+                padding: 14px;
+                border-radius: 7px;
+            }
+            .row {
+                align-items: stretch;
+            }
+            .row > input,
+            .row > button,
+            textarea {
+                width: 100%;
+            }
+            .room-code {
+                width: 100%;
+                margin-top: 6px;
+            }
+            .pack-list {
+                grid-template-columns: 1fr;
+            }
+            .pack-card {
+                gap: 8px;
+                padding: 10px;
+            }
+            .pack-actions {
+                flex-wrap: wrap;
+            }
+            .pack-actions button {
+                flex: 1;
+                min-width: 58px;
+            }
+            .timer {
+                font-size: 2rem;
+            }
+            .vote-row {
+                align-items: stretch;
+                flex-direction: column;
+            }
+            .vote-row button {
+                width: 100%;
+            }
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

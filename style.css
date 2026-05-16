@@ -29,6 +29,7 @@ body {
     margin: 0;
     scroll-behavior: smooth;
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
 /* ─── NAVBAR ─────────────────────────────────────────── */
@@ -230,3 +231,51 @@ body {
 }
 
 /* wall.html uses its own <style> block — we override key tokens */
+
+@media (max-width: 640px) {
+    .navbar {
+        gap: 10px;
+        padding: 12px 12px;
+    }
+
+    .logo {
+        font-size: 1.2rem;
+    }
+
+    .nav-links {
+        gap: 5px;
+        width: 100%;
+    }
+
+    .nav-links a,
+    .discord-btn {
+        font-size: 0.8rem !important;
+        padding: 7px 11px !important;
+    }
+
+    .main-content {
+        margin-top: 108px;
+    }
+
+    .centered-section {
+        min-height: calc(100vh - 108px);
+        height: auto;
+        padding: 28px 16px;
+    }
+
+    .centered-section::before {
+        width: 340px;
+        height: 340px;
+    }
+
+    .giant-title {
+        font-size: 3rem;
+        letter-spacing: 0;
+        max-width: 100%;
+        overflow-wrap: anywhere;
+    }
+
+    .subtitle {
+        font-size: 0.95rem;
+    }
+}

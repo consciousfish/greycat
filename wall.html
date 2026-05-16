@@ -505,6 +505,93 @@
             font-family: 'Inter', sans-serif;
         }
         .del-btn:hover { text-decoration: underline; }
+
+        @media (max-width: 640px) {
+            header {
+                gap: 10px;
+                padding: 12px 12px;
+            }
+            header .logo {
+                font-size: 1.2rem;
+            }
+            header nav {
+                gap: 5px;
+            }
+            header nav a,
+            .discord-btn {
+                font-size: 0.8rem !important;
+                padding: 7px 11px !important;
+            }
+            .main-content {
+                margin: 112px auto 28px;
+                padding: 0 10px;
+            }
+            h1 {
+                font-size: 1.6rem;
+                margin-bottom: 18px;
+            }
+            .boards-wrapper,
+            .comment-box-wrapper,
+            #userProfile,
+            .post {
+                border-radius: 7px;
+                padding: 14px;
+            }
+            .boards-header {
+                margin-bottom: 12px;
+            }
+            .board-list {
+                grid-template-columns: 1fr;
+            }
+            .board-item {
+                gap: 6px;
+            }
+            .board-card {
+                padding: 11px 12px;
+            }
+            .board-actions {
+                width: 64px;
+            }
+            .board-action-btn {
+                padding: 6px;
+                font-size: 10px;
+            }
+            .board-admin-panel,
+            .input-container,
+            #userProfile {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .input-container input,
+            .board-admin-panel input,
+            .send-btn,
+            .attach-btn,
+            #authBtn {
+                width: 100%;
+            }
+            #userProfile > div {
+                align-items: flex-start !important;
+            }
+            #postsContainer {
+                gap: 12px;
+            }
+            .post > div:first-child {
+                gap: 10px !important;
+            }
+            .reaction-btn {
+                padding: 5px 10px;
+            }
+            .post-attached-image {
+                max-height: 260px;
+            }
+            .preview-media-container {
+                max-width: 100%;
+            }
+            .admin-toggle {
+                right: 10px;
+                bottom: 10px;
+            }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
