@@ -185,12 +185,13 @@
         .lore-shot img {
             display: block;
             width: 100%;
-            aspect-ratio: 1 / 1;
-            object-fit: cover;
+            height: 220px;
+            padding: 8px;
+            object-fit: contain;
             background: #111;
         }
         .image-grid.large .lore-shot img {
-            aspect-ratio: 4 / 3;
+            height: 280px;
         }
         .lore-shot figcaption {
             padding: 9px 10px 10px;
@@ -248,6 +249,10 @@
             }
             .lore-shot figcaption {
                 font-size: 0.72rem;
+            }
+            .lore-shot img,
+            .image-grid.large .lore-shot img {
+                height: 170px;
             }
         }
     </style>
