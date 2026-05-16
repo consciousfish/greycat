@@ -319,12 +319,34 @@ window.togglePack = async function(packId, checked) {
     await updateRoom({ ...currentRoom, selectedPackIds: Array.from(selected) });
 };
 
-window.editPack = async function(packId) {
+function buildUpdatedPack(pack, nextName, nextWords) {
+    return {
+        id: pack.id,
+        name: nextName,
+        words: nextWords,
+        ownerId: pack.ownerId || playerId
+    };
+}
+
+async function saveEditedPack(pack, updatedPack) {
+    const customPacks = (currentRoom.customPacks || []).filter(item => item.id !== pack.id);
+    customPacks.push(updatedPack);
+    await updateRoom({ ...currentRoom, customPacks });
+}
+
+window.editPackName = async function(packId) {
     if (!currentRoom || !canManagePacks()) return;
     const pack = getRoomPacks(currentRoom).find(item => item.id === packId);
     if (!pack) return;
     const nextName = prompt('Новое название пака:', pack.name);
     if (!nextName || !nextName.trim()) return;
+    await saveEditedPack(pack, buildUpdatedPack(pack, nextName.trim(), pack.words || []));
+};
+
+window.editPackWords = async function(packId) {
+    if (!currentRoom || !canManagePacks()) return;
+    const pack = getRoomPacks(currentRoom).find(item => item.id === packId);
+    if (!pack) return;
     const nextWordsRaw = prompt('Слова/фразы через запятую:', (pack.words || []).join(', '));
     if (nextWordsRaw === null) return;
     const nextWords = nextWordsRaw.split(',').map(word => word.trim()).filter(Boolean);
@@ -332,15 +354,7 @@ window.editPack = async function(packId) {
         alert('В паке должно быть минимум 2 слова.');
         return;
     }
-    const updatedPack = {
-        id: pack.id,
-        name: nextName.trim(),
-        words: nextWords,
-        ownerId: pack.ownerId || playerId
-    };
-    const customPacks = (currentRoom.customPacks || []).filter(item => item.id !== pack.id);
-    customPacks.push(updatedPack);
-    await updateRoom({ ...currentRoom, customPacks });
+    await saveEditedPack(pack, buildUpdatedPack(pack, pack.name, nextWords));
 };
 
 window.deletePack = async function(packId) {
@@ -423,7 +437,8 @@ function renderPacks() {
                 <span class="pack-count">${(pack.words || []).length} слов</span>
                 ${canManagePacks() ? `
                     <span class="pack-actions" style="display:flex;">
-                        <button class="secondary" onclick="editPack('${pack.id}')">Изм.</button>
+                        <button class="secondary" onclick="editPackName('${pack.id}')">Имя</button>
+                        <button class="secondary" onclick="editPackWords('${pack.id}')">Слова</button>
                         <button class="danger" onclick="deletePack('${pack.id}')">Удал.</button>
                     </span>
                 ` : ''}
